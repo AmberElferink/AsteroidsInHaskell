@@ -16,6 +16,7 @@ step secs gstate
     do randomNumber <- randomIO
        let newNumber = abs randomNumber `mod` 10
        return $ GameState (ShowANumber newNumber) 0
+       return $ GameState (ShowACircle 90.2) 0
   | otherwise
   = -- Just update the elapsed time
     return $ gstate { elapsedTime = elapsedTime gstate + secs }
