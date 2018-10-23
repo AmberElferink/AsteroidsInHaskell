@@ -3,7 +3,7 @@
 
 module Model where
 import Graphics.Gloss
-import Gameobjects
+import GameObjects
   
 data InfoToShow = ShowNothing
                 | ShowANumber Int

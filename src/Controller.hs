@@ -3,7 +3,7 @@
 module Controller where
 
 import Model
-import Gameobjects
+import GameObjects
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
