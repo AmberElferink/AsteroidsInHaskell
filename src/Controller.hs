@@ -3,7 +3,7 @@
 module Controller where
 
 import Model
-import Asteroid
+import Gameobjects
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -14,16 +14,21 @@ step :: Float -> GameState -> IO GameState
 step secs gstate
   | elapsedTime gstate + secs > nO_SECS_BETWEEN_CYCLES
   = -- We show a new random number
-    do randomNumber <- randomIO
+   {-  do randomNumber <- randomIO
        let newNumber = abs randomNumber `mod` 10
-       return $ GameState (ShowANumber newNumber) 0
-       return $ GameState (ShowCircles [draw (move Asteroid { speed = (100, 100), position = (-100, -100), size = 50}), draw Asteroid {speed = (5, 5), position = (50, 50), size = 90}]) 0
+       return $ GameState (ShowANumber newNumber) 0 -}
+       return $ GameState (ShowAsteroids (map move (getAsteroids gstate))) 0
   | otherwise
   = -- Just update the elapsed time
     return $ gstate { elapsedTime = elapsedTime gstate + secs }
 
+getAsteroids :: GameState -> [Asteroid]
+getAsteroids gstate = case infoToShow gstate of
+                   ShowNothing   -> []
+                   ShowANumber n -> []
+                   ShowAChar   c -> []
+                   ShowAsteroids a -> a
 
-    
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)

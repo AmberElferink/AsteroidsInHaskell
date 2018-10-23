@@ -1,7 +1,7 @@
 -- | This module defines how to turn
 --   the game state into a picture
 module View where
-
+import Gameobjects
 import Graphics.Gloss
 import Model
 
@@ -13,4 +13,4 @@ viewPure gstate = case infoToShow gstate of
   ShowNothing   -> blank
   ShowANumber n -> color green (text (show n))
   ShowAChar   c -> color green (text [c])
-  ShowCircles ps -> pictures ps
+  ShowAsteroids a -> pictures (map draw a)
