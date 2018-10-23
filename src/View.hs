@@ -13,4 +13,4 @@ viewPure gstate = case infoToShow gstate of
   ShowNothing   -> blank
   ShowANumber n -> color green (text (show n))
   ShowAChar   c -> color green (text [c])
-  ShowACircle a -> translate (-100) (-100) $ (color green (circle a))
+  ShowCircles ps -> pictures ps
