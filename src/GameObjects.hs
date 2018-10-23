@@ -1,4 +1,4 @@
-module Gameobjects where
+module GameObjects where
 
 import Graphics.Gloss
 
