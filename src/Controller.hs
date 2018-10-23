@@ -3,6 +3,7 @@
 module Controller where
 
 import Model
+import Asteroid
 
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
@@ -16,11 +17,13 @@ step secs gstate
     do randomNumber <- randomIO
        let newNumber = abs randomNumber `mod` 10
        return $ GameState (ShowANumber newNumber) 0
-       return $ GameState (ShowCircles [(translate (-100) (-100) (color green (circle 50))), (translate (50) (50) (color blue (circle 90)))]) 0
+       return $ GameState (ShowCircles [draw (move Asteroid { speed = (100, 100), position = (-100, -100), size = 50}), draw Asteroid {speed = (5, 5), position = (50, 50), size = 90}]) 0
   | otherwise
   = -- Just update the elapsed time
     return $ gstate { elapsedTime = elapsedTime gstate + secs }
 
+
+    
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
