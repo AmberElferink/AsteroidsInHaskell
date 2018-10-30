@@ -21,6 +21,7 @@ instance Move Asteroid where
 instance Draw Asteroid where
     draw a = translate (fst (position a)) (snd (position a)) (color red (circle (size a)))
 
+
 initialAsteroidList :: [Asteroid]
 initialAsteroidList = [Asteroid { speed = (6, 1), position = (-100, -100), size = 50}, Asteroid {speed = (5, 5), position = (50, 50), size = 90}]
 
