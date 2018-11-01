@@ -23,15 +23,18 @@ data GameState = GameState {
                  }
 
 initialState :: StdGen -> GameState
-initialState randomgen = GameState randomgen (ShowAsteroids initialAsteroidList) 0
+initialState randomgen = GameState lastGenerator (ShowAsteroids initialAsteroidList) 0
   where 
     initialAsteroidList :: [Asteroid]
-    initialAsteroidList = [Asteroid { speed = (6, 1), position = (-100, -100), size = 50}, Asteroid {speed = (5, 5), position = (50, 50), size = 90}]
+    initialAsteroidList = [Asteroid { speed = speed1, position = (-100, -100), size = 50}, Asteroid {speed = speed2, position = (50, 50), size = 90}]
+    (speed1, gen1) = generateTwoNumbers (-9, 9) randomgen
+    (speed2, gen2) = generateTwoNumbers (-9, 9) gen1
+    lastGenerator = gen2
     
 
 
-generateTwoNumbers :: RandomGen g => g -> ((Int, Int), g)
-generateTwoNumbers g = let (v1, g1) = random g
-                           (v2, g2) = random g1 -- Use new seed
-                           in ((v1, v2), g2) -- Return last seed
+generateTwoNumbers :: RandomGen g => (Float, Float) -> g -> ((Float, Float), g)
+generateTwoNumbers interval g = let (v1, g1) = randomR interval g
+                                    (v2, g2) = randomR interval g1 -- Use new seed
+                                in ((v1, v2), g2) -- Return last seed
 
