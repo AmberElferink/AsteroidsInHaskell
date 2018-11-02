@@ -13,11 +13,12 @@ data GameState = GameState {
                    asteroids :: [Asteroid]
                  , player :: Player
                  , keyStates :: [KeyState]
+                 , paused :: Bool
                  , elapsedTime :: Float
                  }
 
 initialState :: GameState
-initialState = GameState initialAsteroidList initialPlayer [Up] 0
+initialState = GameState initialAsteroidList initialPlayer [Up] False 0
 
 initialKeys :: [KeyState]
 initialKeys = [Up]
