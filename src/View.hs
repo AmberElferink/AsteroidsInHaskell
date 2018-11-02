@@ -9,8 +9,4 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate = case infoToShow gstate of
-  ShowNothing   -> blank
-  ShowANumber n -> color green (text (show n))
-  ShowAChar   c -> color green (text [c])
-  ShowAsteroids a -> pictures (map draw a)
+viewPure gstate = pictures [(draw . player) gstate, pictures (map draw (asteroids gstate))] 

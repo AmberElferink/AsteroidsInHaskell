@@ -3,20 +3,21 @@
 
 module Model where
 import Graphics.Gloss
+import Graphics.Gloss.Interface.IO.Game
 import GameObjects
-  
-data InfoToShow = ShowNothing
-                | ShowANumber Int
-                | ShowAChar   Char
-                | ShowAsteroids [Asteroid]
 
 nO_SECS_BETWEEN_CYCLES :: Float
 nO_SECS_BETWEEN_CYCLES = 0.1
 
 data GameState = GameState {
-                   infoToShow  :: InfoToShow
+                   asteroids :: [Asteroid]
+                 , player :: Player
+                 , keyStates :: [KeyState]
                  , elapsedTime :: Float
                  }
 
 initialState :: GameState
-initialState = GameState (ShowAsteroids initialAsteroidList) 0
+initialState = GameState initialAsteroidList initialPlayer [Up] 0
+
+initialKeys :: [KeyState]
+initialKeys = [Up]

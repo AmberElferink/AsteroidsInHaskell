@@ -12,29 +12,21 @@ import System.Random
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
-  | elapsedTime gstate + secs > nO_SECS_BETWEEN_CYCLES
-  = -- We show a new random number
-   {-  do randomNumber <- randomIO
-       let newNumber = abs randomNumber `mod` 10
-       return $ GameState (ShowANumber newNumber) 0 -}
-       return $ GameState (ShowAsteroids (map move (getAsteroids gstate))) 0
+  | Down `elem` keyStates gstate = return $ gstate { player = move (player gstate), asteroids = map move (asteroids gstate)}  
+                                         
+       --return gstate
   | otherwise
   = -- Just update the elapsed time
-    return $ gstate { elapsedTime = elapsedTime gstate + secs }
-
-getAsteroids :: GameState -> [Asteroid]
-getAsteroids gstate = case infoToShow gstate of
-                   ShowNothing   -> []
-                   ShowANumber n -> []
-                   ShowAChar   c -> []
-                   ShowAsteroids a -> a
+  return $ gstate {asteroids = map move (asteroids gstate)}   
 
 -- | Handle user input
 input :: Event -> GameState -> IO GameState
 input e gstate = return (inputKey e gstate)
 
 inputKey :: Event -> GameState -> GameState
-inputKey (EventKey (Char c) _ _ _) gstate
-  = -- If the user presses a character key, show that one
-    gstate { infoToShow = ShowAChar c }
-inputKey _ gstate = gstate -- Otherwise keep the same
+inputKey (EventKey (Char c) cs _ _) gstate = case cs of 
+                                           Down -> case c of 'w' -> gstate {player = move (player gstate)} --changePlayerInGS gstate -- If the user presses a character key, show that one
+                                                             _  -> gstate
+                                           _ -> gstate {keyStates = initialKeys }
+inputKey _ gstate = gstate  -- Otherwise keep the same
+    
