@@ -1,6 +1,7 @@
 module GameObjects where
 
     import Graphics.Gloss
+    import Test.QuickCheck
     
     data Asteroid = Asteroid {
       speed :: Point,
@@ -48,4 +49,5 @@ module GameObjects where
     instance Draw Player where
         draw p = color red (polygon (playerPosition p))
     
-    
+    quickCheckTest :: [Int] -> Bool
+    quickCheckTest xs = reverse (reverse xs) == xs
