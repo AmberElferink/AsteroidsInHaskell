@@ -4,10 +4,7 @@ module Controller where
 
 import Model
 import GameObjects
-
-import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
-import System.Random
 
 
 
