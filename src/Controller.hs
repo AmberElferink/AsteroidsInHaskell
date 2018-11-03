@@ -25,10 +25,16 @@ input e gstate = return (inputKey e gstate)
 
 inputKey :: Event -> GameState -> GameState
 inputKey (EventKey (Char c) cs _ _) gstate = case cs of 
-                                           Down -> case c of 'w' -> gstate {player = move (player gstate)} --changePlayerInGS gstate -- If the user presses a character key, show that one
+                                           Down -> case c of 'w' -> gstate {player = move (player gstate), keyStates = changeElement 0 Down (keyStates gstate)} --changePlayerInGS gstate -- If the user presses a character key, show that one
+                                                             'a' -> gstate {player = rotation 1.0 (player gstate)} 
+                                                             'd' -> gstate {player = rotation (-1.0) (player gstate)}   
                                                              'p' -> case paused gstate of True -> gstate {paused = False}
-                                                                                          _ -> gstate {paused = True}
+                                                                                          _ -> gstate {paused = True}                                             
                                                              _  -> gstate
                                            _ -> gstate {keyStates = initialKeys }
 inputKey _ gstate = gstate  -- Otherwise keep the same
+
+changeElement :: Int -> a -> [a] -> [a]
+changeElement _ _ [] = []
+changeElement n newElement xs = take n xs ++ [newElement] ++ drop (n + 1) xs      
     
