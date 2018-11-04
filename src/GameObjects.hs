@@ -49,8 +49,3 @@ instance Draw Asteroid where
 
 instance Draw Player where
     draw p = color red (polygon (playerPosition p))
-
-
-initialAsteroidList :: [Asteroid]
-initialAsteroidList = [Asteroid { speed = (6, 1), position = (-100, -100), size = 50}, Asteroid {speed = (5, 5), position = (50, 50), size = 90}]
-
