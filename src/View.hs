@@ -9,7 +9,8 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate | paused gstate = color white (text "PAUSED")
+viewPure gstate | gameOver gstate = color white (text "Game Over")
+                | paused gstate = color white (text "PAUSED")
                 | otherwise = pictures [(draw . player) gstate, pictures (map draw (asteroids gstate))] 
 
 {-viewPure :: GameState -> Picture

@@ -16,11 +16,12 @@ data GameState = GameState {
                    player :: Player,
                    keyStateW :: KeyState,
                    paused :: Bool,
-                   elapsedTime :: Float
+                   gameOver :: Bool,
+                   elapsedTime :: Float                   
                  }
 
 initialState :: StdGen -> GameState
-initialState randomgen = GameState lastGenerator initialAsteroidList initialPlayer Up False 0
+initialState randomgen = GameState lastGenerator initialAsteroidList initialPlayer Up False False 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
@@ -34,7 +35,7 @@ initialState randomgen = GameState lastGenerator initialAsteroidList initialPlay
     lastGenerator = gen4
 
 initialPlayer :: Player
-initialPlayer = Player {playerPosition = [(-25,-25), (0, 40), (25,-25)], lives = 3, playerSpeed = (0,20), rateOfFire = 1, bulletSpeed = 3, playerRotation = 0}
+initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,20), rateOfFire = 1, bulletSpeed = 3, playerRotation = 0}
 
 
 

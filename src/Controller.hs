@@ -14,7 +14,9 @@ import System.Random
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
+  | gameOver gstate = return gstate
   | paused gstate = return gstate
+  | any (collision (player gstate)) (asteroids gstate) = return gstate {gameOver = True}
   | keyStateW gstate == Down = return $ movePlayer (rotatedPlayerSpeed(player gstate)) gstate --the world moves respectively to the player                               
        --return gstate
   | otherwise
@@ -28,10 +30,12 @@ input e gstate = return (inputKey e gstate)
 inputKey :: Event -> GameState -> GameState
 inputKey (EventKey (Char c) cs _ _) gstate = case cs of 
                                            Down -> case c of 'w' -> (movePlayer (rotatedPlayerSpeed(player gstate)) gstate){keyStateW = Down} -- move forward and keep track of the keyState of W
-                                                             'a' -> gstate {player = rotation 1.0 (player gstate)} --rotate left
-                                                             'd' -> gstate {player = rotation (-1.0) (player gstate)} --rotate right
+                                                             'a' -> gstate {player = rotation 0.5 (player gstate)} --rotate left
+                                                             'd' -> gstate {player = rotation (-0.5) (player gstate)} --rotate right
                                                              'p' -> case paused gstate of True -> gstate {paused = False}
-                                                                                          _ -> gstate {paused = True}                                             
+                                                                                          _ -> gstate {paused = True}
+                                                             'n' -> case gameOver gstate of True -> initialState (genny gstate)
+                                                                                            _ -> gstate                                             
                                                              _  -> gstate
                                            Up -> case c of 'w' -> (movePlayer (0,0) gstate) {keyStateW = Up}
                                                            _ -> gstate -- don't change keyStateW to up, because we might press two buttons at a time
@@ -50,5 +54,4 @@ movePlayer :: Point -> GameState -> GameState
 movePlayer velocity gstate = gstate {player = (player gstate) {playerSpeed = velocity}, asteroids = map (move.moveRespectively) (asteroids gstate) }
     where moveRespectively :: Asteroid -> Asteroid
           moveRespectively ast = ast {position = pointMinuspoint (position ast) velocity}
-          pointMinuspoint :: Point -> Point -> Point
-          pointMinuspoint (x1,y1) (x2,y2) = (x1 - x2,y1 - y2)
+       

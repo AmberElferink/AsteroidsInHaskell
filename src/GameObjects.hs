@@ -1,6 +1,8 @@
+{-# LANGUAGE MultiParamTypeClasses #-}
 module GameObjects where
 
 import Graphics.Gloss
+
 
 data Asteroid = Asteroid {
   speed :: Point,
@@ -20,6 +22,21 @@ data Player = Player {
 class Move a where 
     move :: a -> a
 
+class Collision a b where
+    collision :: a -> b -> Bool
+
+pointMinuspoint, pointPlusPoint :: Point -> Point -> Point
+pointMinuspoint (x1,y1) (x2,y2) = (x1 - x2,y1 - y2)
+pointPlusPoint (x1,y1) (x2,y2) = (x1 + x2, y1 + y2)
+
+instance Collision Player Asteroid where
+    collision p a = any (< size a) (map (ikbenhetzat.magnitude (position a)) (playerPosition p ++ [(0,0)]))
+        where magnitude :: Point -> Point -> Float
+              magnitude (ax,ay) (px, py) = sqrt((**)(ax-px) + (**) (ay-py))
+              ikbenhetzat :: Float -> Float
+              ikbenhetzat i = i - magnitude (speed a) (0,0)
+              (**) :: Float -> Float
+              (**) x = x * x
 
 class Draw a where
     draw :: a -> Picture
