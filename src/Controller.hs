@@ -9,11 +9,13 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
+
+
 -- | Handle one iteration of the game
 step :: Float -> GameState -> IO GameState
 step secs gstate
-  | Down `elem` keyStates gstate = return $ gstate { player = move (player gstate), asteroids = map move (asteroids gstate)}  
-                                         
+  | paused gstate = return gstate
+  | Down `elem` keyStates gstate = return $ gstate { player = move (player gstate), asteroids = map move (asteroids gstate)}                                         
        --return gstate
   | otherwise
   = -- Just update the elapsed time
@@ -27,7 +29,9 @@ inputKey :: Event -> GameState -> GameState
 inputKey (EventKey (Char c) cs _ _) gstate = case cs of 
                                            Down -> case c of 'w' -> gstate {player = move (player gstate), keyStates = changeElement 0 Down (keyStates gstate)} --changePlayerInGS gstate -- If the user presses a character key, show that one
                                                              'a' -> gstate {player = rotation 1.0 (player gstate)} 
-                                                             'd' -> gstate {player = rotation (-1.0) (player gstate)}                                                
+                                                             'd' -> gstate {player = rotation (-1.0) (player gstate)}   
+                                                             'p' -> case paused gstate of True -> gstate {paused = False}
+                                                                                          _ -> gstate {paused = True}                                             
                                                              _  -> gstate
                                            _ -> gstate {keyStates = initialKeys }
 inputKey _ gstate = gstate  -- Otherwise keep the same

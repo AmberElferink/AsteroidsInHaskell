@@ -2,22 +2,47 @@
 --   which represent the state of the game
 
 module Model where
+import GameObjects
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
-import GameObjects
+import System.Random
 
 nO_SECS_BETWEEN_CYCLES :: Float
-nO_SECS_BETWEEN_CYCLES = 0.1
+nO_SECS_BETWEEN_CYCLES = 0.01667 --60 FPS
 
 data GameState = GameState {
-                   asteroids :: [Asteroid]
-                 , player :: Player
-                 , keyStates :: [KeyState]
-                 , elapsedTime :: Float
+                   genny :: StdGen,
+                   asteroids :: [Asteroid],
+                   player :: Player,
+                   keyStates :: [KeyState],
+                   paused :: Bool,
+                   elapsedTime :: Float
                  }
 
-initialState :: GameState
-initialState = GameState initialAsteroidList initialPlayer [Up] 0
+initialState :: StdGen -> GameState
+initialState randomgen = GameState lastGenerator initialAsteroidList initialPlayer [Up] False 0
+  where
+    --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
+    --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
+    initialAsteroidList :: [Asteroid]
+    initialAsteroidList = [Asteroid { speed = speed1, position = position1, size = 50},
+                           Asteroid { speed = speed2, position = position2, size = 90}]
+    (speed1, gen1) = generateTwoNumbers (-9, 9) (-9, 9) randomgen
+    (speed2, gen2) = generateTwoNumbers (-9, 9) (-9, 9) gen1
+    (position1, gen3) = generateTwoNumbers (-960, 960) (-540, 540) gen2
+    (position2, gen4) = generateTwoNumbers (-960, 960) (-540, 540) gen3
+    lastGenerator = gen4
+    initialPlayer :: Player
+    initialPlayer = Player {playerPosition = [(-25,-25), (0, 40), (25,-25)], lives = 3, playerSpeed = (0,6), rateOfFire = 1, bulletSpeed = 3}
+
+
+
+generateTwoNumbers :: RandomGen g => (Float, Float) -> (Float, Float) -> g -> ((Float, Float), g)
+generateTwoNumbers interval1 interval2 g = let (v1, g1) = randomR interval1 g
+                                               (v2, g2) = randomR interval2 g1
+                                            in ((v1, v2), g2)
+
+
 
 initialKeys :: [KeyState]
 initialKeys = [Up]
