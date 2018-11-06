@@ -19,8 +19,8 @@ data GameState = GameState {
                    elapsedTime :: Float
                  }
 
-initialState :: StdGen -> GameState
-initialState randomgen = GameState lastGenerator initialAsteroidList initialPlayer [Up] False 0
+initialState :: StdGen -> Either String [Asteroid]-> GameState
+initialState randomgen asteroid = GameState lastGenerator initialAsteroidList initialPlayer [Up] False 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven

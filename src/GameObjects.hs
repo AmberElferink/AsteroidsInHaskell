@@ -1,14 +1,23 @@
+{-# LANGUAGE DeriveGeneric #-}
+
 module GameObjects where
 
     import Graphics.Gloss
     import Test.QuickCheck
+    import GHC.Generics
+    import Data.Aeson
     
     data Asteroid = Asteroid {
       speed :: Point,
       position :: Point,
       size :: Float
-    }
+    } deriving (Show, Generic)
     
+    instance ToJSON Asteroid where
+        toEncoding = genericToEncoding defaultOptions
+
+    instance FromJSON Asteroid
+
     data Player = Player {
         playerPosition :: Path,
         lives :: Int,
