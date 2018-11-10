@@ -13,12 +13,12 @@ import Data.Aeson
 import Data.Text
 
 
-
+type JsonOutput = Either String [Enemy]
 
 main :: IO ()
-main = do   enemyStr <- eitherDecode <$> B.readFile "Asteroids.json" :: IO (Either String [Enemy])
+main = do   eitherEnemy <- eitherDecode <$> B.readFile "Asteroids.json" :: IO (JsonOutput)
             rng <- getStdGen
-            case enemyStr of
+            case eitherEnemy of
               Left err -> putStrLn err
               Right initEnemies -> playIO (InWindow "Counter" (1900, 1000) (0, 0)) -- Or FullScreen
                                 black            -- Background color

@@ -1,8 +1,9 @@
 [
     {
-     "speed": "(3, 3)",
-     "position": "(0, 0)",
-     "size": 50
+     "enemyPosition": [800, 800],
+     "enemySpeedSize": 6,
+     "eRateOfFire": 0,
+     "eBulletSpeed": 0,
+     "sizeOfShip" : 30
     }
 ]
-
