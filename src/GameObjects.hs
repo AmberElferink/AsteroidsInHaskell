@@ -2,10 +2,10 @@
 {-# LANGUAGE DeriveGeneric #-}
 
 module GameObjects where
-
 import Graphics.Gloss
 import Test.QuickCheck
 import GHC.Generics
+import Data.Aeson
 
 (-.), (+.) :: Point -> Point -> Point
 (-.) (x1,y1) (x2,y2) = (x1 - x2,y1 - y2)
@@ -40,7 +40,9 @@ data Asteroid = Asteroid {
   speed :: Point,
   position :: Point,
   size :: Float
-} deriving(Show, Generic)
+} 
+
+
 
 data Player = Player {
     playerPosition :: Path,
@@ -57,7 +59,12 @@ data Enemy = Enemy {
     eRateOfFire :: Float,
     eBulletSpeed :: Float,
     sizeOfShip :: Float
-}
+} deriving(Show, Generic)
+
+instance ToJSON Enemy where
+    toEncoding = genericToEncoding defaultOptions
+  
+instance FromJSON Enemy 
 
 data Bullet = Bullet {
     bSize :: Float,

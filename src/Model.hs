@@ -12,6 +12,7 @@ nO_SECS_BETWEEN_CYCLES = 0.01667 --60 FPS
 
 data GameState = GameState {
                    genny :: StdGen,
+                   initialEnemies :: [Enemy],
                    asteroids :: [Asteroid],
                    player :: Player,
                    enemies :: [Enemy],
@@ -22,8 +23,8 @@ data GameState = GameState {
                    elapsedTime :: Float                   
                  }
 
-initialState :: StdGen -> Either String [Asteroid]-> GameState
-initialState randomgen asteroid = GameState lastGenerator initialAsteroidList initialPlayer [] [] Up False False 0
+initialState :: StdGen -> [Enemy]-> GameState
+initialState randomgen initialEnemy = GameState lastGenerator initialEnemy initialAsteroidList initialPlayer [] [] Up False False 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
@@ -46,7 +47,5 @@ generateTwoNumbers :: RandomGen g => (Float, Float) -> (Float, Float) -> g -> ((
 generateTwoNumbers interval1 interval2 g = let (v1, g1) = randomR interval1 g
                                                (v2, g2) = randomR interval2 g1
                                             in ((v1, v2), g2)
-
-
 
 

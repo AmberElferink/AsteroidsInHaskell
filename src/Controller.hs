@@ -4,7 +4,6 @@ module Controller where
 
 import Model
 import GameObjects
-
 import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
@@ -51,7 +50,7 @@ inputKey (EventKey (Char c) cs _ _) gstate | paused gstate = case cs of Down -> 
                                                                                       'a' -> gstate {player = (player gstate) {playerRotation = 0.5}} --rotate left
                                                                                       'd' -> gstate {player = (player gstate) {playerRotation = -0.5}} --rotate right
                                                                                       'p' -> gstate {paused = True}
-                                                                                      'n' -> case gameOver gstate of True -> initialState (genny gstate)
+                                                                                      'n' -> case gameOver gstate of True -> initialState (genny gstate) (initialEnemies gstate)
                                                                                                                      _ -> gstate
                                                                                       'v' -> gstate {bullets = bullets gstate ++ shoot (player gstate)}
                                                                                       _ -> gstate                                             
