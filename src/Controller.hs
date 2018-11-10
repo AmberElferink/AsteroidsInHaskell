@@ -62,7 +62,7 @@ inputKey _ gstate = gstate  -- Otherwise keep the same
 --The world moves instead of the player
 --If the playerSpeed is zero, asteroids will move normally. Otherwise, the playerSpeed is substracted from the Astroid positions 
 movePlayer :: Vector -> GameState -> GameState
-movePlayer velocity gstate = gstate {asteroids = map (move.moveARespectively) (asteroids gstate), enemies = map(moveEnemy (player gstate).moveERespectively) (enemies gstate)}
+movePlayer velocity gstate = gstate {asteroids = map (move.moveARespectively) (asteroids gstate), enemies = map(moveEnemy (player gstate).moveERespectively) (enemies gstate), bullets = map(move.moveBRespectively) (bullets gstate)}
     where moveARespectively :: Asteroid -> Asteroid
           moveARespectively ast = ast {position = (-.) (position ast) velocity}
           moveERespectively :: Enemy -> Enemy
