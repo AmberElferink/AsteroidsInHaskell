@@ -36,7 +36,7 @@ initialState randomgen = GameState lastGenerator initialAsteroidList initialPlay
     (position2, gen4) = generateTwoNumbers (-960, 960) (-540, 540) gen3
     lastGenerator = gen4
     initialPlayer :: Player
-    initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,20), rateOfFire = 1, bulletSpeed = 20, playerRotation = 0}
+    initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,20), rateOfFire = 1, bulletSpeed = 28, playerRotation = 0}
     initialEnemyList :: [Enemy]
     initialEnemyList = [Enemy {enemyPosition = (800,800), enemySpeedSize = 12, eRateOfFire = 0, eBulletSpeed = 0, sizeOfShip = 30}]
 

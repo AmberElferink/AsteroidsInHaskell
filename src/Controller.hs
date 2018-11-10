@@ -17,11 +17,11 @@ step secs gstate
   | gameOver gstate = return gstate
   | paused gstate = return gstate
   | any (collision (player gstate)) (asteroids gstate) ||  any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
-  | keyStateW gstate == Down = return $ (movePlayer (playerSpeed(player gstate)) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
+  | keyStateW gstate == Down = return $ ((movePlayer (playerSpeed(player gstate)).tryStuff) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
        --return gstate
   | otherwise
   = -- Just update the elapsed time
-  return $ (tryStuff gstate) {asteroids = map move (asteroids gstate), enemies = map (moveEnemy(player gstate)) (enemies gstate), player = rotation (player gstate), bullets = map move (bullets gstate)} -- no button is pressed, the world moves normally
+  return $ gstate {asteroids = map move (asteroids gstate), enemies = map (moveEnemy(player gstate)) (enemies gstate), player = rotation (player gstate), bullets = map move (bullets (tryStuff gstate))} -- no button is pressed, the world moves normally
 
 tryStuff :: GameState -> GameState
 tryStuff gstate = gstate { bullets = bMustBeDeleted (hoi gstate) (bullets gstate)}
