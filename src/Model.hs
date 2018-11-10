@@ -14,26 +14,31 @@ data GameState = GameState {
                    genny :: StdGen,
                    asteroids :: [Asteroid],
                    player :: Player,
-                   keyStates :: [KeyState],
+                   enemies :: [Enemy],
+                   bullets :: [Bullet],
+                   keyStateW :: KeyState,
                    paused :: Bool,
-                   elapsedTime :: Float
+                   gameOver :: Bool,
+                   elapsedTime :: Float                   
                  }
 
 initialState :: StdGen -> Either String [Asteroid]-> GameState
-initialState randomgen asteroid = GameState lastGenerator initialAsteroidList initialPlayer [Up] False 0
+initialState randomgen asteroid = GameState lastGenerator initialAsteroidList initialPlayer [] [] Up False False 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
     initialAsteroidList :: [Asteroid]
     initialAsteroidList = [Asteroid { speed = speed1, position = position1, size = 50},
-                           Asteroid { speed = speed2, position = position2, size = 90}]
+                           Asteroid { speed = speed2, position = position2, size = 30}]
     (speed1, gen1) = generateTwoNumbers (-9, 9) (-9, 9) randomgen
     (speed2, gen2) = generateTwoNumbers (-9, 9) (-9, 9) gen1
     (position1, gen3) = generateTwoNumbers (-960, 960) (-540, 540) gen2
     (position2, gen4) = generateTwoNumbers (-960, 960) (-540, 540) gen3
     lastGenerator = gen4
     initialPlayer :: Player
-    initialPlayer = Player {playerPosition = [(-25,-25), (0, 40), (25,-25)], lives = 3, playerSpeed = (0,6), rateOfFire = 1, bulletSpeed = 3}
+    initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,20), rateOfFire = 1, bulletSpeed = 28, playerRotation = 0}
+    initialEnemyList :: [Enemy]
+    initialEnemyList = [Enemy {enemyPosition = (800,800), enemySpeedSize = 12, eRateOfFire = 0, eBulletSpeed = 0, sizeOfShip = 30}]
 
 
 
@@ -44,5 +49,4 @@ generateTwoNumbers interval1 interval2 g = let (v1, g1) = randomR interval1 g
 
 
 
-initialKeys :: [KeyState]
-initialKeys = [Up]
+

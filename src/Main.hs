@@ -20,7 +20,7 @@ main = do   asteroids <- eitherDecode <$> B.readFile "Asteroids.json" :: IO (Eit
                 Left err -> putStrLn err
                 Right ps -> print ps
             rng <- getStdGen
-            playIO (InWindow "Counter" (400, 400) (0, 0)) -- Or FullScreen
+            playIO (InWindow "Counter" (1900, 1000) (0, 0)) -- Or FullScreen
               black            -- Background color
               10               -- Frames per second
               (initialState rng asteroids)   -- Initial state

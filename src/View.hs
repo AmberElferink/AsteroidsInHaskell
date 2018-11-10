@@ -9,8 +9,9 @@ view :: GameState -> IO Picture
 view = return . viewPure
 
 viewPure :: GameState -> Picture
-viewPure gstate | paused gstate = color white (text "PAUSED")
-                | otherwise = pictures [(draw . player) gstate, pictures (map draw (asteroids gstate))] 
+viewPure gstate | gameOver gstate = translate (-500) 0 (color white (text "Game Over"))
+                | paused gstate = translate (-500) 0 (color white (text "PAUSED"))
+                | otherwise = pictures [(draw . player) gstate, pictures (map draw (asteroids gstate)), pictures (map draw (enemies gstate)), pictures (map draw (bullets gstate))]  
 
 {-viewPure :: GameState -> Picture
 viewPure gstate = case infoToShow gstate of
