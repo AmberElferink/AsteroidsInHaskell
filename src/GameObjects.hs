@@ -63,7 +63,7 @@ data Bullet = Bullet {
 class Shoot a where
     shoot :: a -> [Bullet]
 
-instance Shoot Player where --DIT
+instance Shoot Player where
     shoot p = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = middlePointTriangle (playerPosition p)}]
          where bspeed' = mult (bulletSpeed p) (unitVector (playerSpeed p)) 
 

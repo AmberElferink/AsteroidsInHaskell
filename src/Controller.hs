@@ -67,4 +67,6 @@ movePlayer velocity gstate = gstate {asteroids = map (move.moveARespectively) (a
           moveARespectively ast = ast {position = (-.) (position ast) velocity}
           moveERespectively :: Enemy -> Enemy
           moveERespectively en = en {enemyPosition = (-.) (enemyPosition en) velocity}
+          moveBRespectively :: Bullet -> Bullet
+          moveBRespectively bul = bul { bPosition = (-.) (bPosition bul) velocity}
        
