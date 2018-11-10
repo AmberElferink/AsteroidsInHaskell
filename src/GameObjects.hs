@@ -55,6 +55,18 @@ data Enemy = Enemy {
     sizeOfShip :: Float
 }
 
+data Bullet = Bullet {
+    bSize :: Float,
+    bSpeed :: Vector,
+    bPosition :: Point
+}
+class Shoot a where
+    shoot :: a -> [Bullet]
+
+instance Shoot Player where --DIT
+    shoot p = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = middlePointTriangle (playerPosition p)}]
+         where bspeed' = mult (bulletSpeed p) (unitVector (playerSpeed p)) 
+
 class Move a where 
     move :: a -> a
 
@@ -64,10 +76,15 @@ class Collision a b where
 instance Collision Player Asteroid where
     collision p a = any (<= size a + magnitude (speed a) (0,0)) (map (magnitude (position a)) (playerPosition p ++ [(0,0)] ++ lineMiddlePoints (playerPosition p)))
         
-
 instance Collision Player Enemy where
     collision p e = any (<= sizeOfShip e + magnitude (mult (enemySpeedSize e) (unitTowardsP p e)) (0,0)) (map (magnitude (enemyPosition e)) (playerPosition p ++ [(0,0)] ++ lineMiddlePoints (playerPosition p)))
               
+instance Collision Bullet Asteroid where 
+    collision b a = bSize b + size a >=  magnitude (bPosition b) (position a)
+    
+instance Eq Bullet where --to be able to delete one from the list
+    Bullet size1 speed1 pos1 == Bullet size2 speed2 pos2 = size1 == size2 && speed1 == speed2 && pos1 == pos2
+
 class Draw a where
     draw :: a -> Picture
 
@@ -81,14 +98,15 @@ instance Rotation Player where
              i = playerRotation a
      
 instance Move Asteroid where
-    move a = a {position = psition (position a) (speed a)}
-      where psition :: Point -> Point -> Point
-            psition (px, py) (sx, sy) = (px + sx, py + sy) 
+    move a = a {position = (+.) (position a) (speed a)}
+     
+
+instance Move Bullet where 
+    move a = a {bPosition = (+.) (bPosition a) (bSpeed a)}
             
 moveEnemy :: Player -> Enemy -> Enemy 
-moveEnemy p e = e {enemyPosition = psition (enemyPosition e) (mult (enemySpeedSize e) (unitTowardsP p e))}
-    where psition :: Point -> Vector -> Point
-          psition (px, py) (sx, sy) = (px + sx, py + sy) 
+moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) (mult (enemySpeedSize e) (unitTowardsP p e))}
+    
      
 instance Draw Player where
     draw p = color red (polygon (playerPosition p))
@@ -96,3 +114,5 @@ instance Draw Asteroid where
     draw a = translate (fst (position a)) (snd (position a)) (color white (circle (size a)))
 instance Draw Enemy where
     draw e = translate (fst (enemyPosition e)) (snd (enemyPosition e)) (color white (thickCircle (sizeOfShip e) (sizeOfShip e)))
+instance Draw Bullet where 
+    draw b = translate (fst (bPosition b)) (snd (bPosition b)) (color white (circle (bSize b)))
