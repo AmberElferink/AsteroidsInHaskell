@@ -16,7 +16,7 @@ step :: Float -> GameState -> IO GameState
 step secs gstate
   | gameOver gstate = return gstate
   | paused gstate = return gstate
-  | any (collision (player gstate)) (asteroids gstate) = return gstate {gameOver = True}
+  | any (collision (player gstate)) (asteroids gstate) ||  any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
   | keyStateW gstate == Down = return $ (movePlayer (playerSpeed(player gstate)) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
        --return gstate
   | otherwise
@@ -47,7 +47,7 @@ inputKey _ gstate = gstate  -- Otherwise keep the same
 movePlayer :: Vector -> GameState -> GameState
 movePlayer velocity gstate = gstate {asteroids = map (move.moveARespectively) (asteroids gstate), enemies = map(moveEnemy (player gstate).moveERespectively) (enemies gstate)}
     where moveARespectively :: Asteroid -> Asteroid
-          moveARespectively ast = ast {position = pointMinuspoint (position ast) velocity}
+          moveARespectively ast = ast {position = (-.) (position ast) velocity}
           moveERespectively :: Enemy -> Enemy
-          moveERespectively en = en {enemyPosition = pointMinuspoint (enemyPosition en) velocity}
+          moveERespectively en = en {enemyPosition = (-.) (enemyPosition en) velocity}
        

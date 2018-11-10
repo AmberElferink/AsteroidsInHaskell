@@ -3,6 +3,35 @@ module GameObjects where
 
 import Graphics.Gloss
 
+(-.), (+.) :: Point -> Point -> Point
+(-.) (x1,y1) (x2,y2) = (x1 - x2,y1 - y2)
+(+.) (x1,y1) (x2,y2) = (x1 + x2, y1 + y2)
+
+pointDiv :: Point -> Float -> Point
+pointDiv (x, y) n = ((/) x n, (/) y n)
+
+magnitude :: Point -> Point -> Float
+magnitude (ax,ay) (px, py) = sqrt((**)(ax-px) + (**) (ay-py))
+    where (**) :: Float -> Float
+          (**) x = x * x
+
+unitVector :: Vector -> Vector
+unitVector (x,y) = (x/magnitude (x,y) (0,0), y/magnitude(x,y) (0,0))
+
+unitTowardsP :: Player -> Enemy -> Vector
+unitTowardsP p e = unitVector ((-.) (middlePointTriangle(playerPosition p)) (enemyPosition e))
+
+mult :: Float -> Vector -> Vector
+mult i (x,y) = (x*i, y*i)
+
+lineMiddlePoints :: [Point] -> [Point]
+lineMiddlePoints [x,y,z] = [pointDiv ((+.) x y) 2, pointDiv ((+.) z y) 2, pointDiv ((+.) x z) 2]
+lineMiddlePoints _ = []
+
+middlePointTriangle :: Path -> Point
+middlePointTriangle [(x1,y1), (x2,y2), (x3,y3)]= ((/) (x1+x2+x3) 3, (/) (y1+y2+y3) 3)
+middlePointTriangle _ = error "je hebt geen driehoek"
+
 data Asteroid = Asteroid {
   speed :: Point,
   position :: Point,
@@ -32,29 +61,13 @@ class Move a where
 class Collision a b where
     collision :: a -> b -> Bool
 
-pointMinuspoint, pointPlusPoint :: Point -> Point -> Point
-pointMinuspoint (x1,y1) (x2,y2) = (x1 - x2,y1 - y2)
-pointPlusPoint (x1,y1) (x2,y2) = (x1 + x2, y1 + y2)
-
-pointDiv :: Point -> Float -> Point
-pointDiv (x, y) n = ((/) x n, (/) y n)
-
-magnitude :: Point -> Point -> Float
-magnitude (ax,ay) (px, py) = sqrt((**)(ax-px) + (**) (ay-py))
-    where (**) :: Float -> Float
-          (**) x = x * x
-
-
-
 instance Collision Player Asteroid where
     collision p a = any (<= size a + magnitude (speed a) (0,0)) (map (magnitude (position a)) (playerPosition p ++ [(0,0)] ++ lineMiddlePoints (playerPosition p)))
-        where lineMiddlePoints :: [Point] -> [Point]
-              lineMiddlePoints [] = []
-              lineMiddlePoints [x] = []
-              lineMiddlePoints [x,y] = []
-              lineMiddlePoints [x,y,z] = [pointDiv (pointPlusPoint x y) 2, pointDiv (pointPlusPoint z y) 2, pointDiv (pointPlusPoint x z) 2]
-              
+        
 
+instance Collision Player Enemy where
+    collision p e = any (<= sizeOfShip e + magnitude (mult (enemySpeedSize e) (unitTowardsP p e)) (0,0)) (map (magnitude (enemyPosition e)) (playerPosition p ++ [(0,0)] ++ lineMiddlePoints (playerPosition p)))
+              
 class Draw a where
     draw :: a -> Picture
 
@@ -73,15 +86,9 @@ instance Move Asteroid where
             psition (px, py) (sx, sy) = (px + sx, py + sy) 
             
 moveEnemy :: Player -> Enemy -> Enemy 
-moveEnemy p e = e {enemyPosition = psition (enemyPosition e) (mult (enemySpeedSize e) unitTowardsP)}
+moveEnemy p e = e {enemyPosition = psition (enemyPosition e) (mult (enemySpeedSize e) (unitTowardsP p e))}
     where psition :: Point -> Vector -> Point
           psition (px, py) (sx, sy) = (px + sx, py + sy) 
-          unitVector :: Vector -> Vector
-          unitVector (x,y) = (x/magnitude (x,y) (0,0), y/magnitude(x,y) (0,0))
-          unitTowardsP :: Vector
-          unitTowardsP = unitVector (pointMinuspoint (0,0) (enemyPosition e))
-          mult :: Float -> Vector -> Vector
-          mult i (x,y) = (x*i, y*i)
      
 instance Draw Player where
     draw p = color red (polygon (playerPosition p))
