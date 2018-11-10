@@ -17,7 +17,7 @@ step secs gstate
   | gameOver gstate = return gstate
   | paused gstate = return gstate
   | any (collision (player gstate)) (asteroids gstate) ||  any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
-  | keyStateW gstate == Down = return $ (movePlayer (playerSpeed(player gstate)) gstate){player = rotation (player gstate), bullets = map move (bullets gstate)} --the world moves respectively to the player                               
+  | keyStateW gstate == Down = return $ (movePlayer (playerSpeed(player gstate)) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
        --return gstate
   | otherwise
   = -- Just update the elapsed time
@@ -68,5 +68,5 @@ movePlayer velocity gstate = gstate {asteroids = map (move.moveARespectively) (a
           moveERespectively :: Enemy -> Enemy
           moveERespectively en = en {enemyPosition = (-.) (enemyPosition en) velocity}
           moveBRespectively :: Bullet -> Bullet
-          moveBRespectively bul = bul { bPosition = (-.) (bPosition bul) velocity}
+          moveBRespectively bul = bul {bPosition = (-.) (bPosition bul) velocity}
        
