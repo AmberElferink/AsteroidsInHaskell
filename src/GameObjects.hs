@@ -34,7 +34,7 @@ lineMiddlePoints _ = []
 
 middlePointTriangle :: Path -> Point
 middlePointTriangle [(x1,y1), (x2,y2), (x3,y3)]= ((/) (x1+x2+x3) 3, (/) (y1+y2+y3) 3)
-middlePointTriangle _ = error "je hebt geen driehoek"
+middlePointTriangle _ = error "no triangle input"
 
 data Asteroid = Asteroid {
   speed :: Point,
