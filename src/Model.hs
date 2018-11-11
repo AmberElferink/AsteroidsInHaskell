@@ -19,11 +19,12 @@ data GameState = GameState {
                    keyStateW :: KeyState,
                    paused :: Bool,
                    gameOver :: Bool,
+                   timeStamp :: Float,
                    elapsedTime :: Float                   
                  }
 
 initialState :: StdGen -> GameState
-initialState randomgen = GameState lastGenerator initialAsteroidList initialPlayer [] [] Up False False 0
+initialState randomgen = GameState lastGenerator initialAsteroidList initialPlayer initialEnemyList [] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
@@ -38,9 +39,7 @@ initialState randomgen = GameState lastGenerator initialAsteroidList initialPlay
     initialPlayer :: Player
     initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,20), rateOfFire = 1, bulletSpeed = 28, playerRotation = 0}
     initialEnemyList :: [Enemy]
-    initialEnemyList = [Enemy {enemyPosition = (800,800), enemySpeedSize = 12, eRateOfFire = 0, eBulletSpeed = 0, sizeOfShip = 30}]
-
-
+    initialEnemyList = [Enemy {enemyPosition = (800,800), enemySpeedSize = 12, enemySpeedVec = (0,0), eRateOfFire = 0, eBulletSpeed = 0, sizeOfShip = 30}]
 
 generateTwoNumbers :: RandomGen g => (Float, Float) -> (Float, Float) -> g -> ((Float, Float), g)
 generateTwoNumbers interval1 interval2 g = let (v1, g1) = randomR interval1 g

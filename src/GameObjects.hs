@@ -50,6 +50,7 @@ data Player = Player {
 data Enemy = Enemy {
     enemyPosition :: Point,
     enemySpeedSize :: Float,
+    enemySpeedVec :: Vector,
     eRateOfFire :: Float,
     eBulletSpeed :: Float,
     sizeOfShip :: Float
@@ -67,6 +68,10 @@ instance Shoot Player where
     shoot p = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = middlePointTriangle (playerPosition p)}]
          where bspeed' = mult (bulletSpeed p) (unitVector (playerSpeed p)) 
 
+instance Shoot Enemy where
+    shoot e = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = enemyPosition e}]
+         where bspeed' = mult (eBulletSpeed e) (unitVector (enemySpeedVec e)) 
+
 class Move a where 
     move :: a -> a
 
@@ -81,10 +86,19 @@ instance Collision Player Enemy where
               
 instance Collision Bullet Asteroid where 
     collision b a = bSize b + size a >=  magnitude (bPosition b) (position a)
+
+instance Collision Bullet Enemy where 
+    collision b e = bSize b + sizeOfShip e >=  magnitude (bPosition b) (enemyPosition e)
     
 instance Eq Bullet where --to be able to delete one from the list
     Bullet size1 speed1 pos1 == Bullet size2 speed2 pos2 = size1 == size2 && speed1 == speed2 && pos1 == pos2
 
+instance Eq Enemy where
+    Enemy pos1 speed1 speedvec1 fireRate1 bulSpeed1 size1 == Enemy pos2 speed2 speedvec2 fireRate2 bulSpeed2 size2 = pos1 == pos2 && speed1 == speed2 && speedvec1 == speedvec2 && fireRate1 == fireRate2 && bulSpeed1 == bulSpeed2 && size1 == size2
+
+instance Eq Asteroid where 
+    Asteroid speed1 pos1 size1 == Asteroid speed2 pos2 size2 = speed1 == speed2 && pos1 == pos2 && size1 == size2
+    
 class Draw a where
     draw :: a -> Picture
 
@@ -100,13 +114,11 @@ instance Rotation Player where
 instance Move Asteroid where
     move a = a {position = (+.) (position a) (speed a)}
      
-
 instance Move Bullet where 
     move a = a {bPosition = (+.) (bPosition a) (bSpeed a)}
             
 moveEnemy :: Player -> Enemy -> Enemy 
-moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) (mult (enemySpeedSize e) (unitTowardsP p e))}
-    
+moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) (mult (enemySpeedSize e) (unitTowardsP p e)), enemySpeedVec = mult (enemySpeedSize e) (unitTowardsP p e)}
      
 instance Draw Player where
     draw p = color red (polygon (playerPosition p))
