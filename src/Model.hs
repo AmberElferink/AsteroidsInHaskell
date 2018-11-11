@@ -35,7 +35,7 @@ initialState randomgen initialEnemies = GameState lastGenerator initialEnemies i
     generateAsteroids = generateInitialAsteroids 15 randomgen []
     initialAsteroidList = fst generateAsteroids
     gen2 = snd generateAsteroids
-    generateStars = generateInitialStars 1000 gen2 []
+    generateStars = generateInitialStars 5000 gen2 []
     initialStarList = fst generateStars
     lastGenerator = snd generateStars
     initialPlayer :: Player
@@ -68,7 +68,7 @@ generateInitialStars :: Int -> StdGen -> [Star]-> ([Star], StdGen)
 generateInitialStars 0 g as = (as, g)
 generateInitialStars n g as = generateInitialStars (n - 1) gen4 ((Star { sRelSpeed = speed1, sPosition = position1, sSize = size1}):as)
   where (speed1, gen2) = randomR (0.3, 3) g
-        (position1, gen3) = generateTwoNumbers (-5000, 960) (-5000, 540) gen2
+        (position1, gen3) = generateTwoNumbers (-5000, 5000) (-5000, 5000) gen2
         (size1, gen4) = randomR (2, 4) gen3
 
 

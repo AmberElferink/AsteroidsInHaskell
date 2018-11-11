@@ -1,7 +1,7 @@
 [
     {
         "enemyPosition": [-6000, 8000],
-        "enemySpeedSize": 15,
+        "enemySpeedSize": 10,
         "enemySpeedVec": [0, 0],
         "eRateOfFire": 5,
         "eBulletSpeed": 5,
@@ -9,7 +9,7 @@
     },
     {
         "enemyPosition": [11000, 6000],
-        "enemySpeedSize": 15,
+        "enemySpeedSize": 12,
         "enemySpeedVec": [0, 0],
         "eRateOfFire": 5,
         "eBulletSpeed": 5,
@@ -17,7 +17,7 @@
     },
     {
         "enemyPosition": [1000, 1000],
-        "enemySpeedSize": 13,
+        "enemySpeedSize": 10,
         "enemySpeedVec": [0, 0],
         "eRateOfFire": 5,
         "eBulletSpeed": 5,
