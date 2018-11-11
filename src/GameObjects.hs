@@ -129,8 +129,9 @@ instance Move Bullet where
     move a = a {bPosition = (+.) (bPosition a) (bSpeed a)}
             
 moveEnemy :: Player -> Enemy -> Enemy 
-moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) (mult (enemySpeedSize e) (unitTowardsP p e)), enemySpeedVec = mult (enemySpeedSize e) (unitTowardsP p e)}
-     
+moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) speedVec', enemySpeedVec = speedVec'}
+     where speedVec' :: Vector
+           speedVec' = mult (enemySpeedSize e) (unitTowardsP p e)
 instance Draw Player where
     draw p = color red (polygon (playerPosition p))
 instance Draw Asteroid where
