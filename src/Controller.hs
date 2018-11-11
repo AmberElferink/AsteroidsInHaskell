@@ -29,7 +29,10 @@ step secs gstate
             True -> return basicGs {bullets = 
                   map move (bullets basicGs ++ concatMap shoot (enemies basicGs)), 
                   elapsedTime = 0} 
-            _    -> return basicGs {bullets = map move (bullets ((astBulRemove) gstate)),  elapsedTime = elapsedTime basicGs + secs} 
+            _    -> return basicGs {
+                  bullets = map move (bullets ((astBulRemove) gstate)),  
+                  elapsedTime = elapsedTime basicGs + secs,
+                  animations = map move (deleteDoneAnimations (animations gstate))} 
       moveP <- case keyStateW shootEnGS of 
                         Down -> return (movePlayer (playerSpeed (player shootEnGS)) shootEnGS)
                         _    -> return shootEnGS
@@ -39,24 +42,27 @@ astBulRemove :: GameState -> GameState
 astBulRemove gstate = 
   gstate { bullets = bMustBeDeleted listCollisions (bullets gstate), 
   asteroids = notBMustBeDeleted  listCollisions (asteroids gstate),
-  animations = as}
+  animations = getExplosions listCollisions ++ animations gstate}
     where checkBulAsColls :: GameState -> [(Bool, Bullet, Asteroid)]
           checkBulAsColls gstate = [(collision b a, b, a) | b <- bullets gstate, a <- asteroids gstate]
           listCollisions :: [(Bool, Bullet, Asteroid)] 
           listCollisions = checkBulAsColls gstate
-          fListCollisions :: [(Bool, Bullet, Asteroid)]
-          fListCollisions = filter (\(b, _, _) -> b) listCollisions
-          fBullets :: [Bullet] 
-          fBullets = map (\(_, bullet, _) -> bullet) fListCollisions
-          bs :: [Point]
-          bs = map bPosition fBullets 
-          as = map explosion bs ++ animations gstate
+
+
+getExplosions lc = map explosion bs
+      where fListCollisions = filter (\(b, _, _) -> b) lc
+            fBullets :: [Bullet] 
+            fBullets = map (\(_, bullet, _) -> bullet) fListCollisions
+            bs :: [Point]
+            bs = map bPosition fBullets 
 
 enBulRemove :: GameState -> GameState
-enBulRemove gstate = gstate {bullets = bMustBeDeleted (checkBulEnColls gstate) (bullets gstate), 
-                             enemies = notBMustBeDeleted  (checkBulEnColls gstate) (enemies gstate)}
+enBulRemove gstate = gstate {bullets = bMustBeDeleted listCollisions (bullets gstate), 
+                             enemies = notBMustBeDeleted listCollisions (enemies gstate),
+                             animations = getExplosions listCollisions}
     where checkBulEnColls :: GameState -> [(Bool, Bullet, Enemy)]
           checkBulEnColls gstate = [(collision b e, b, e) | b <- bullets gstate, e <- enemies gstate]
+          listCollisions = checkBulEnColls gstate
 
 bMustBeDeleted :: [(Bool, Bullet, a)] -> [Bullet] -> [Bullet]
 bMustBeDeleted _ [] = []

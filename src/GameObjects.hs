@@ -154,7 +154,7 @@ instance Move Bullet where
 
 instance Move Animation where
     move a  | (frameN a + 1) >= frameMax a =  a {frameN = 0, anPos = (+.) (anPos a) (anSpeed a)}
-            | otherwise = a {frameN = frameN a + 1, anPos = (+.) (anPos a) (anSpeed a)}
+            | otherwise = a {frameN = frameN a + 1, anPos = (+.) (anPos a) (anSpeed a), amountCycles = amountCycles a + 1}
             
 moveEnemy :: Player -> Enemy -> Enemy 
 moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) speedVec', enemySpeedVec = speedVec'}
