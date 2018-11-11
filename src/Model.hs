@@ -8,7 +8,7 @@ import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
 nO_SECS_BETWEEN_CYCLES :: Float
-nO_SECS_BETWEEN_CYCLES = 1 --60 FPS
+nO_SECS_BETWEEN_CYCLES = 5 --60 FPS
 
 data GameState = GameState {
                    genny :: StdGen,

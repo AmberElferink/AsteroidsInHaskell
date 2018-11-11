@@ -111,7 +111,10 @@ instance Collision Bullet Asteroid where
 
 instance Collision Bullet Enemy where 
     collision b e = bSize b + sizeOfShip e >=  magnitude (bPosition b) (enemyPosition e)
-    
+
+instance Collision Bullet Player where 
+    collision b p = any (<= bSize b + magnitude (bSpeed b) (0,0)) (map (magnitude (bPosition b)) (playerPosition p ++ [(0,0)] ++ lineMiddlePoints (playerPosition p)))
+
 instance Eq Bullet where --to be able to delete one from the list
     Bullet size1 speed1 pos1 == Bullet size2 speed2 pos2 = size1 == size2 && speed1 == speed2 && pos1 == pos2
 
