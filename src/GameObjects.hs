@@ -141,6 +141,10 @@ instance Move Asteroid where
      
 instance Move Bullet where 
     move a = a {bPosition = (+.) (bPosition a) (bSpeed a)}
+
+instance Move Animation where
+    move a  | (frameN a + 1) >= frameMax a =  a {frameN = 0, anPos = (+.) (anPos a) (anSpeed a)}
+            | otherwise = a {frameN = frameN a + 1, anPos = (+.) (anPos a) (anSpeed a)}
             
 moveEnemy :: Player -> Enemy -> Enemy 
 moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) speedVec', enemySpeedVec = speedVec'}
@@ -155,7 +159,7 @@ instance Draw Enemy where
 instance Draw Bullet where 
     draw b = translate (fst (bPosition b)) (snd (bPosition b)) (color white (circle (bSize b)))
 instance Draw Animation where
-    draw Animation {pics = as, frameN = fN, frameMax = fM, anPos = anP, anSpeed = anS} 
+    draw Animation {pics = as, frameN = fN, frameMax = fM, anPos = anP, anSpeed = _} 
         | fN > fM = blank
         | otherwise = color orange (translate (fst anP) (snd anP) (as !! fN))
 
