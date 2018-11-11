@@ -20,11 +20,12 @@ data GameState = GameState {
                    keyStateW :: KeyState,
                    paused :: Bool,
                    gameOver :: Bool,
+                   timeStamp :: Float,
                    elapsedTime :: Float                   
                  }
 
 initialState :: StdGen -> [Enemy]-> GameState
-initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] Up False False 0
+initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
