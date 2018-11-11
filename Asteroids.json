@@ -1,0 +1,16 @@
+[
+    {
+     "enemyPosition": [-6000, 8000],
+     "enemySpeedSize": 4,
+     "eRateOfFire": 0,
+     "eBulletSpeed": 0,
+     "sizeOfShip" : 30
+    },
+    {
+        "enemyPosition": [10000, 6000],
+        "enemySpeedSize": 4,
+        "eRateOfFire": 0,
+        "eBulletSpeed": 0,
+        "sizeOfShip" : 30
+    }
+]
