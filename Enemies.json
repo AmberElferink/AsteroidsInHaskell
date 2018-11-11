@@ -1,15 +1,15 @@
 [
     {
-     "enemyPosition": [-6000, 8000],
-     "enemySpeedSize": 4,
-     "enemySpeedVec": [0, 0],
-     "eRateOfFire": 0,
-     "eBulletSpeed": 0,
-     "sizeOfShip" : 30
+        "enemyPosition": [-6000, 8000],
+        "enemySpeedSize": 15,
+        "enemySpeedVec": [0, 0],
+        "eRateOfFire": 0,
+        "eBulletSpeed": 0,
+        "sizeOfShip" : 30
     },
     {
         "enemyPosition": [11000, 6000],
-        "enemySpeedSize": 4,
+        "enemySpeedSize": 15,
         "enemySpeedVec": [0, 0],
         "eRateOfFire": 0,
         "eBulletSpeed": 0,
