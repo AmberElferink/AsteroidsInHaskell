@@ -27,7 +27,7 @@ data GameState = GameState {
                  }
 
 initialState :: StdGen -> [Enemy]-> GameState
-initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] initialStarList [] Up False False 0 0
+initialState randomgen initialEn = GameState lastGenerator initialEn initialAsteroidList initialPlayer initialEn [] initialStarList [] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
@@ -39,7 +39,7 @@ initialState randomgen initialEnemies = GameState lastGenerator initialEnemies i
     initialStarList = fst generateStars
     lastGenerator = snd generateStars
     initialPlayer :: Player
-    initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,30), rateOfFire = 1, bulletSpeed = 50, playerRotation = 0}
+    initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, currentPSpeed = (0,0), horsePower = (0,30), bulletSpeed = 50, playerRotation = 0}
 
 
 
@@ -80,13 +80,14 @@ instance Random ScreenArea where
               (x, g') -> (toEnum x, g')
   random g = randomR (LeftUpper, LeftLower) g
 
-
+enumRandomR :: (RandomGen b, Enum a1, Enum a2, Enum a3) => (a1, a2) -> b -> (a3, b)
 enumRandomR (a, b) g =
   case randomR (fromEnum a, fromEnum b) g of
     (x, g') -> (toEnum x, g')
     
 
 --this served as inspiration for the star animation: https://stackoverflow.com/questions/19688888/animating-with-gloss-in-haskell
+intervalbig :: [Float]
 intervalbig = [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5]
 
 explosion :: Point -> Animation
