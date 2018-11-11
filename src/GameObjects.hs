@@ -50,8 +50,9 @@ data Animation = Animation {
     frameN :: Int,
     frameMax :: Int,
     anPos :: Point,
-    anSpeed :: Point
-}
+    anSpeed :: Point,
+    only1Cycle :: Bool
+} deriving(Eq)
 
 
 

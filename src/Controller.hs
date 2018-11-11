@@ -19,27 +19,27 @@ step secs gstate
       case keyStateW gstate of 
       Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate)
         {player = rotation (player gstate),
-        animations = map move (animations gstate)} --the world moves respectively to the player                               
+        animations = map move (deleteDoneAnimations (animations gstate))} --the world moves respectively to the player                               
       _ -> return gstate {
             asteroids = map move (asteroids (astBulRemove gstate)), 
             enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), 
             player = rotation (player gstate), 
             bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)) ++ concatMap shoot (enemies gstate), 
             elapsedTime = 0,
-            animations = map move (animations gstate)} -- no button is pressed, the world moves normally
+            animations = map move (deleteDoneAnimations (animations gstate))} -- no button is pressed, the world moves normally
   | otherwise 
   = -- Just update the elapsed time
   case keyStateW gstate of 
       Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate){
             player = rotation (player gstate), 
-            animations = map move (animations gstate)} --the world moves respectively to the player                               
+            animations = map move (deleteDoneAnimations (animations gstate))} --the world moves respectively to the player                               
       _    -> return gstate {
             asteroids = map move (asteroids (astBulRemove gstate)), 
             enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), 
             player = rotation (player gstate), 
             bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)), 
             elapsedTime = elapsedTime gstate + secs,
-            animations = map move (animations gstate)} -- no button is pressed, the world moves normally
+            animations = map move (deleteDoneAnimations (animations gstate))} -- no button is pressed, the world moves normally
       where timePassed :: Bool
             timePassed = secs + elapsedTime gstate >= nO_SECS_BETWEEN_CYCLES
                
@@ -69,10 +69,15 @@ notBMustBeDeleted [] as = as
 notBMustBeDeleted ((True, b, a):xs) as = notBMustBeDeleted xs (deletFromList a as)
 notBMustBeDeleted ((_, _, _):xs) as = notBMustBeDeleted xs as
 
+deleteDoneAnimations :: [Animation] -> [Animation]
+deleteDoneAnimations [] = []
+deleteDoneAnimations (a:as) | frameN a == frameMax a - 1 && only1Cycle a = deleteDoneAnimations (deletFromList a as)
+                            | otherwise = a : deleteDoneAnimations as
+
 deletFromList :: Eq a => a -> [a] -> [a]
 deletFromList _ [] = []
 deletFromList a (x:xs) | a == x = xs
-                                   | otherwise = x : deletFromList a xs
+                       | otherwise = x : deletFromList a xs
 
 
 

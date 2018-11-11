@@ -76,15 +76,14 @@ enumRandomR (a, b) g =
     (x, g') -> (toEnum x, g')
     
 
-
+--this served as inspiration for the star animation: https://stackoverflow.com/questions/19688888/animating-with-gloss-in-haskell
 intervalbig = [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5]
-
-
 star :: Animation
 star = Animation { 
-    pics = [rotate x (pictures [line [(-8.5,0),(0,50),(8.5,0)],line[(0,50),(0,0)]]) | x <- intervalbig],
+    pics = [rotate x (pictures [line [(-8.5,0),(0,50),(8.5,0)], line[(0,50),(0,0)]]) | x <- intervalbig],
     frameN = 1,
     frameMax = 16,
     anPos = (15, 15),
-    anSpeed = (0, 0)
+    anSpeed = (0, 0),
+    only1Cycle = True
 }
