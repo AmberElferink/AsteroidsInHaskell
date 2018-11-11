@@ -22,7 +22,12 @@ step secs gstate
   | otherwise
   = -- Just update the elapsed time
   return $ gstate {asteroids = map move (asteroids (astBulRemove gstate)), enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), player = rotation (player gstate), bullets = map move (bullets ((astBulRemove.enBulRemove) gstate))} -- no button is pressed, the world moves normally
-       
+
+{- standardChecks :: GameState -> IO GameState
+standardChecks = case any (collision (player gstate)) (asteroids gstate) of True -> do x <- gstate {bullets = bullets gstate ++ shoot (player gstate)}
+                                                                                       return x
+                                                                            _ ->  -}
+               
 
 astBulRemove :: GameState -> GameState
 astBulRemove gstate = gstate { bullets = bMustBeDeleted (checkBulAsColls gstate) (bullets gstate), asteroids = notBMustBeDeleted  (checkBulAsColls gstate) (asteroids gstate)}
