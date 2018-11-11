@@ -13,23 +13,42 @@ step :: Float -> GameState -> IO GameState
 step secs gstate
   | gameOver gstate = return gstate
   | paused gstate = return gstate
-  | any (collision (player gstate)) (asteroids gstate) ||  any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
-  | otherwise = do let basicGs = gstate {asteroids = map move (asteroids (astBulRemove gstate)), enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), player = rotation (player gstate), bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)), elapsedTime = elapsedTime gstate + secs} 
-                   shootEnGS <- case secs + elapsedTime basicGs >= 5 of True -> return basicGs {bullets = bullets basicGs ++ concatMap shoot (enemies gstate), elapsedTime = 0} 
-                                                                        _    -> return basicGs {elapsedTime = elapsedTime basicGs + secs} 
-                   moveP <- case keyStateW shootEnGS of Down -> return (movePlayer (playerSpeed (player gstate)) shootEnGS)
-                                                        _    -> return shootEnGS
-                   return ((astBulRemove.enBulRemove) moveP)
+  | any (collision (player gstate)) (asteroids gstate) ||  
+    any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
+  | timePassed = case keyStateW gstate of 
+      Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate)
+        {player = rotation (player gstate)} --the world moves respectively to the player                               
+      _ -> return gstate {
+            asteroids = map move (asteroids (astBulRemove gstate)), 
+            enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), 
+            player = rotation (player gstate), 
+            bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)) ++ concatMap shoot (enemies gstate), 
+            elapsedTime = 0} -- no button is pressed, the world moves normally
+  | otherwise 
+  = -- Just update the elapsed time
+  case keyStateW gstate of Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
+                           _    -> return gstate {
+                                 asteroids = map move (asteroids (astBulRemove gstate)), 
+                                 enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), 
+                                 player = rotation (player gstate), 
+                                 bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)), 
+                                 elapsedTime = elapsedTime gstate + secs} -- no button is pressed, the world moves normally
+      where timePassed :: Bool
+            timePassed = secs + elapsedTime gstate >= nO_SECS_BETWEEN_CYCLES
+               
 
 astBulRemove :: GameState -> GameState
-astBulRemove gstate = gstate { bullets = bMustBeDeleted checkBulAsColls (bullets gstate), asteroids = notBMustBeDeleted checkBulAsColls (asteroids gstate)}
-    where checkBulAsColls :: [(Bool, Bullet, Asteroid)]
-          checkBulAsColls = [(collision b a, b, a) | b <- bullets gstate, a <- asteroids gstate]
+astBulRemove gstate = g
+  state { bullets = bMustBeDeleted (checkBulAsColls gstate) (bullets gstate), 
+  asteroids = notBMustBeDeleted  (checkBulAsColls gstate) (asteroids gstate)}
+    where checkBulAsColls :: GameState -> [(Bool, Bullet, Asteroid)]
+          checkBulAsColls gstate = [(collision b a, b, a) | b <- bullets gstate, a <- asteroids gstate]
 
 enBulRemove :: GameState -> GameState
-enBulRemove gstate = gstate {bullets = bMustBeDeleted checkBulEnColls (bullets gstate), enemies = notBMustBeDeleted checkBulEnColls (enemies gstate)}
-    where checkBulEnColls :: [(Bool, Bullet, Enemy)]
-          checkBulEnColls = [(collision b e, b, e) | b <- bullets gstate, e <- enemies gstate]
+enBulRemove gstate = gstate {bullets = bMustBeDeleted (checkBulEnColls gstate) (bullets gstate), 
+                             enemies = notBMustBeDeleted  (checkBulEnColls gstate) (enemies gstate)}
+    where checkBulEnColls :: GameState -> [(Bool, Bullet, Enemy)]
+          checkBulEnColls gstate = [(collision b e, b, e) | b <- bullets gstate, e <- enemies gstate]
 
 bMustBeDeleted :: [(Bool, Bullet, a)] -> [Bullet] -> [Bullet]
 bMustBeDeleted _ [] = []
@@ -40,7 +59,7 @@ bMustBeDeleted ((_, _, _):xs) bs = bMustBeDeleted xs bs
 notBMustBeDeleted :: Eq a => [(Bool, Bullet, a)] -> [a] -> [a]
 notBMustBeDeleted _ [] = []
 notBMustBeDeleted [] as = as
-notBMustBeDeleted ((True, _, a):xs) as = notBMustBeDeleted xs (deletFromList a as)
+notBMustBeDeleted ((True, b, a):xs) as = notBMustBeDeleted xs (deletFromList a as)
 notBMustBeDeleted ((_, _, _):xs) as = notBMustBeDeleted xs as
 
 deletFromList :: Eq a => a -> [a] -> [a]
