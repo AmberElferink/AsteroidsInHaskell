@@ -7,9 +7,12 @@ import Test.QuickCheck
 import GHC.Generics
 import Data.Aeson
 
+secsBetwCycles :: Float
+secsBetwCycles = 0.01667 --60 FPS
+
 (-.), (+.) :: Point -> Point -> Point
-(-.) (x1,y1) (x2,y2) = (x1 - x2,y1 - y2)
-(+.) (x1,y1) (x2,y2) = (x1 + x2, y1 + y2)
+(-.) (x1,y1) (x2,y2) = (x1 - x2 * secsBetwCycles, y1 - y2)
+(+.) (x1,y1) (x2,y2) = (x1 + x2 * secsBetwCycles, y1 + y2)
 
 pointDiv :: Point -> Float -> Point
 pointDiv (x, y) n = ((/) x n, (/) y n)
