@@ -14,14 +14,14 @@ step secs gstate
   | gameOver gstate = return gstate
   | paused gstate = return gstate
   | any (collision (player gstate)) (asteroids gstate) ||  any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
-  | fuckzooi = case keyStateW gstate of Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
-                                        _ -> return gstate {asteroids = map move (asteroids (astBulRemove gstate)), enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), player = rotation (player gstate), bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)) ++ concatMap shoot (enemies gstate), elapsedTime = 0} -- no button is pressed, the world moves normally
+  | timePassed = case keyStateW gstate of Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
+                                          _ -> return gstate {asteroids = map move (asteroids (astBulRemove gstate)), enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), player = rotation (player gstate), bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)) ++ concatMap shoot (enemies gstate), elapsedTime = 0} -- no button is pressed, the world moves normally
   | otherwise 
   = -- Just update the elapsed time
   case keyStateW gstate of Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate){player = rotation (player gstate)} --the world moves respectively to the player                               
                            _    -> return gstate {asteroids = map move (asteroids (astBulRemove gstate)), enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), player = rotation (player gstate), bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)), elapsedTime = elapsedTime gstate + secs} -- no button is pressed, the world moves normally
-      where fuckzooi :: Bool
-            fuckzooi = secs + elapsedTime gstate >= nO_SECS_BETWEEN_CYCLES
+      where timePassed :: Bool
+            timePassed = secs + elapsedTime gstate >= nO_SECS_BETWEEN_CYCLES
                
 
 astBulRemove :: GameState -> GameState

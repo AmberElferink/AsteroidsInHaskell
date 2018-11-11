@@ -7,6 +7,9 @@ import Graphics.Gloss
 import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
+nO_SECS_BETWEEN_CYCLES :: Float
+nO_SECS_BETWEEN_CYCLES = 1 --60 FPS
+
 data GameState = GameState {
                    genny :: StdGen,
                    initialEnemies :: [Enemy],
@@ -22,12 +25,12 @@ data GameState = GameState {
                  }
 
 initialState :: StdGen -> [Enemy]-> GameState
-initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemyList [] Up False False 0 0
+initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
     generateAsteroids :: ([Asteroid], StdGen)
-    generateAsteroids = generateInitialAsteroids 10 randomgen []
+    generateAsteroids = generateInitialAsteroids 15 randomgen []
     initialAsteroidList = fst generateAsteroids
     lastGenerator = snd generateAsteroids
     initialPlayer :: Player
@@ -49,11 +52,11 @@ generateInitialAsteroids n g as = generateInitialAsteroids (n - 1) gen3  ((Aster
   where (randomPos, gen1) = random g :: (ScreenArea, StdGen)
         (speed1, gen2) = generateTwoNumbers (-20, 20) (-20, 20) gen1
         (position1, gen3) = generatePositions randomPos gen2 
-        generatePositions :: ScreenArea -> StdGen -> (Point, StdGen)
-        generatePositions a g4 | a == LeftUpper = generateTwoNumbers (-960, -50) (-540, -490) g4
-                               | a == LeftLower = generateTwoNumbers (-960, -50) (540, 50) g4
-                               | a == RightLower = generateTwoNumbers (50, 960) (540, 50) g4
-                               | a == RightUpper = generateTwoNumbers (50, 960) (-540, -490) g4
+        generatePositions :: ScreenArea -> StdGen -> (Point, StdGen) --asteroids spawnt outside of a box of 100 x 100 around the player.
+        generatePositions a g4 | a == LeftUpper = generateTwoNumbers (-960, -100) (-100, -540) g4
+                               | a == LeftLower = generateTwoNumbers (-960, -100) (540, 100) g4
+                               | a == RightLower = generateTwoNumbers (100, 960) (540, 100) g4
+                               | a == RightUpper = generateTwoNumbers (100, 960) (-100, -540) g4
 
 
 
