@@ -45,13 +45,17 @@ data Asteroid = Asteroid {
   size :: Float
 } 
 
+
+
 data Animation = Animation {
     pics :: [Picture],
     frameN :: Int,
     frameMax :: Int,
     anPos :: Point,
     anSpeed :: Point,
-    only1Cycle :: Bool
+    amountCycles :: Int,
+    maxAmountCycles :: Int,
+    neverEnding :: Bool
 } deriving(Eq)
 
 

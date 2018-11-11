@@ -85,5 +85,19 @@ star = Animation {
     frameMax = 16,
     anPos = (15, 15),
     anSpeed = (0, 0),
-    only1Cycle = True
+    amountCycles = 0,
+    maxAmountCycles = 100,
+    neverEnding = True
+}
+
+explosion :: Point -> Animation
+explosion p = Animation { 
+  pics = [rotate x (pictures [line [(-8.5,0),(0,50),(8.5,0)], line[(0,50),(0,0)]]) | x <- intervalbig],
+  frameN = 1,
+  frameMax = 16,
+  anPos = p,
+  anSpeed = (0, 0),
+  amountCycles = 0,
+  maxAmountCycles = 3,
+  neverEnding = False
 }

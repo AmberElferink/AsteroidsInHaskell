@@ -37,10 +37,20 @@ step secs gstate
 
 astBulRemove :: GameState -> GameState
 astBulRemove gstate = 
-  gstate { bullets = bMustBeDeleted (checkBulAsColls gstate) (bullets gstate), 
-  asteroids = notBMustBeDeleted  (checkBulAsColls gstate) (asteroids gstate)}
+  gstate { bullets = bMustBeDeleted listCollisions (bullets gstate), 
+  asteroids = notBMustBeDeleted  listCollisions (asteroids gstate),
+  animations = as}
     where checkBulAsColls :: GameState -> [(Bool, Bullet, Asteroid)]
           checkBulAsColls gstate = [(collision b a, b, a) | b <- bullets gstate, a <- asteroids gstate]
+          listCollisions :: [(Bool, Bullet, Asteroid)] 
+          listCollisions = checkBulAsColls gstate
+          fListCollisions :: [(Bool, Bullet, Asteroid)]
+          fListCollisions = filter (\(b, _, _) -> b) listCollisions
+          fBullets :: [Bullet] 
+          fBullets = map (\(_, bullet, _) -> bullet) fListCollisions
+          bs :: [Point]
+          bs = map bPosition fBullets 
+          as = map explosion bs ++ animations gstate
 
 enBulRemove :: GameState -> GameState
 enBulRemove gstate = gstate {bullets = bMustBeDeleted (checkBulEnColls gstate) (bullets gstate), 
@@ -62,7 +72,7 @@ notBMustBeDeleted ((_, _, _):xs) as = notBMustBeDeleted xs as
 
 deleteDoneAnimations :: [Animation] -> [Animation]
 deleteDoneAnimations [] = []
-deleteDoneAnimations (a:as) | frameN a == frameMax a - 1 && only1Cycle a = deleteDoneAnimations (deletFromList a as)
+deleteDoneAnimations (a:as) | amountCycles a >= maxAmountCycles a && neverEnding a == False = deleteDoneAnimations (deletFromList a as)
                             | otherwise = a : deleteDoneAnimations as
 
 deletFromList :: Eq a => a -> [a] -> [a]
