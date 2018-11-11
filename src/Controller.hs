@@ -14,35 +14,26 @@ step secs gstate
   | gameOver gstate = return gstate
   | paused gstate = return gstate
   | any (collision (player gstate)) (asteroids gstate) ||  
-    any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
-  | timePassed = 
-      case keyStateW gstate of 
-      Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate)
-        {player = rotation (player gstate),
-        animations = map move (deleteDoneAnimations (animations gstate))} --the world moves respectively to the player                               
-      _ -> return gstate {
-            asteroids = map move (asteroids (astBulRemove gstate)), 
-            enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), 
-            player = rotation (player gstate), 
-            bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)) ++ concatMap shoot (enemies gstate), 
-            elapsedTime = 0,
-            animations = map move (deleteDoneAnimations (animations gstate))} -- no button is pressed, the world moves normally
-  | otherwise 
-  = -- Just update the elapsed time
-  case keyStateW gstate of 
-      Down -> return $ (((movePlayer (playerSpeed(player gstate)).astBulRemove).enBulRemove) gstate){
-            player = rotation (player gstate), 
-            animations = map move (deleteDoneAnimations (animations gstate))} --the world moves respectively to the player                               
-      _    -> return gstate {
-            asteroids = map move (asteroids (astBulRemove gstate)), 
-            enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), 
-            player = rotation (player gstate), 
-            bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)), 
-            elapsedTime = elapsedTime gstate + secs,
-            animations = map move (deleteDoneAnimations (animations gstate))} -- no button is pressed, the world moves normally
-      where timePassed :: Bool
-            timePassed = secs + elapsedTime gstate >= nO_SECS_BETWEEN_CYCLES
-               
+    any (collision (player gstate)) (enemies gstate) || 
+    any (collision (player gstate)) (bullets gstate) = return gstate {gameOver = True}
+  | otherwise = do 
+      let basicGs = 
+            gstate {
+                  asteroids = map move (asteroids (astBulRemove gstate)), 
+                  enemies = map (moveEnemy(player gstate)) (enemies (gstate)), 
+                  player = rotation (player gstate), 
+                  elapsedTime = elapsedTime gstate + secs,
+                  animations = map move (deleteDoneAnimations (animations gstate))
+                  } 
+      shootEnGS <- case secs + elapsedTime basicGs >= 5 of 
+            True -> return basicGs {bullets = 
+                  map move (bullets basicGs ++ concatMap shoot (enemies basicGs)), 
+                  elapsedTime = 0} 
+            _    -> return basicGs {bullets = map move (bullets ((astBulRemove) gstate)),  elapsedTime = elapsedTime basicGs + secs} 
+      moveP <- case keyStateW shootEnGS of 
+                        Down -> return (movePlayer (playerSpeed (player shootEnGS)) shootEnGS)
+                        _    -> return shootEnGS
+      return ((astBulRemove) moveP)
 
 astBulRemove :: GameState -> GameState
 astBulRemove gstate = 
