@@ -18,9 +18,9 @@ pointDiv :: Point -> Float -> Point
 pointDiv (x, y) n = ((/) x n, (/) y n)
 
 magnitude :: Point -> Point -> Float
-magnitude (ax,ay) (px, py) = sqrt((**)(ax-px) + (**) (ay-py))
-    where (**) :: Float -> Float
-          (**) x = x * x
+magnitude (ax,ay) (px, py) = sqrt(pow2(ax-px) + pow2 (ay-py))
+    where pow2 :: Float -> Float
+          pow2 x = x * x
 
 unitVector :: Vector -> Vector
 unitVector (x,y) = (x/magnitude (x,y) (0,0), y/magnitude(x,y) (0,0))
@@ -79,12 +79,17 @@ class Shoot a where
     shoot :: a -> [Bullet]
 
 instance Shoot Player where
-    shoot p = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = middlePointTriangle (playerPosition p)}]
-         where bspeed' = mult (bulletSpeed p) (unitVector (playerSpeed p)) 
+    shoot p = [Bullet {bSpeed = bSpeed', bSize = 7, bPosition =  mult (40 + bulletSpeed p) (unitVector (playerSpeed p)) +. frontPlayer (playerPosition p)}]
+         where bSpeed' = mult (bulletSpeed p) (unitVector (playerSpeed p)) +. playerSpeed p
+               frontPlayer :: Path -> Point
+               frontPlayer [_, y, _] = y
+               frontPlayer _ = error "Het is geen driehoek"
 
 instance Shoot Enemy where
-    shoot e = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = (+.) (enemyPosition e) (mult (sizeOfShip e * 3) (unitVector (enemySpeedVec e)))}]
-         where bspeed' = mult (eBulletSpeed e) (unitVector (enemySpeedVec e)) 
+    shoot e = [Bullet {bSpeed = bSpeed', bSize = 7, bPosition = enemyPosition e +. mult (2*7 + 10*sizeOfShip e + eBulletSpeed e + enemySpeedSize e) (unitVector bSpeed')}] -- +. enemyPosition e +. mult (sizeOfShip e) (unitVector bSpeed')
+         where bSpeed' = mult (eBulletSpeed e + enemySpeedSize e) (unitVector (enemySpeedVec e))
+
+
 
 class Move a where 
     move :: a -> a
@@ -104,8 +109,8 @@ instance Collision Bullet Asteroid where
 instance Collision Bullet Enemy where 
     collision b e = bSize b + sizeOfShip e >=  magnitude (bPosition b) (enemyPosition e)
 
-instance Collision Bullet Player where 
-    collision b p = any (<= bSize b + magnitude (bSpeed b) (0,0)) (map (magnitude (bPosition b)) (playerPosition p ++ [(0,0)] ++ lineMiddlePoints (playerPosition p)))
+instance Collision Player Bullet where 
+    collision p b = any (<= bSize b) (map (magnitude (bPosition b)) (playerPosition p ++ [(0,0)] ++ lineMiddlePoints (playerPosition p)))
 
 instance Eq Bullet where --to be able to delete one from the list
     Bullet size1 speed1 pos1 == Bullet size2 speed2 pos2 = size1 == size2 && speed1 == speed2 && pos1 == pos2
@@ -138,6 +143,7 @@ moveEnemy :: Player -> Enemy -> Enemy
 moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) speedVec', enemySpeedVec = speedVec'}
      where speedVec' :: Vector
            speedVec' = mult (enemySpeedSize e) (unitTowardsP p e)
+
 instance Draw Player where
     draw p = color red (polygon (playerPosition p))
 instance Draw Asteroid where

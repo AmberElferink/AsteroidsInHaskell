@@ -13,13 +13,13 @@ step :: Float -> GameState -> IO GameState
 step secs gstate
   | gameOver gstate = return gstate
   | paused gstate = return gstate
-  | any (collision (player gstate)) (asteroids gstate) ||  any (collision (player gstate)) (enemies gstate) = return gstate {gameOver = True}
-  | otherwise = do let basicGs = gstate {asteroids = map move (asteroids (astBulRemove gstate)), enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), player = rotation (player gstate), bullets = map move (bullets ((astBulRemove.enBulRemove) gstate)), elapsedTime = elapsedTime gstate + secs} 
-                   shootEnGS <- case secs + elapsedTime basicGs >= 5 of True -> return basicGs {bullets = bullets basicGs ++ concatMap shoot (enemies gstate), elapsedTime = 0} 
-                                                                        _    -> return basicGs {elapsedTime = elapsedTime basicGs + secs} 
-                   moveP <- case keyStateW shootEnGS of Down -> return (movePlayer (playerSpeed (player gstate)) shootEnGS)
+  | any (collision (player gstate)) (asteroids gstate) ||  any (collision (player gstate)) (enemies gstate) || any (collision (player gstate)) (bullets gstate) = return gstate {gameOver = True}
+  | otherwise = do let basicGs = gstate {asteroids = map move (asteroids (astBulRemove gstate)), enemies = map (moveEnemy(player gstate)) (enemies (gstate)), player = rotation (player gstate), elapsedTime = elapsedTime gstate + secs} 
+                   shootEnGS <- case secs + elapsedTime basicGs >= 5 of True -> return basicGs {bullets = map move (bullets basicGs ++ concatMap shoot (enemies basicGs)), elapsedTime = 0} 
+                                                                        _    -> return basicGs {bullets = map move (bullets ((astBulRemove) gstate)),  elapsedTime = elapsedTime basicGs + secs} 
+                   moveP <- case keyStateW shootEnGS of Down -> return (movePlayer (playerSpeed (player shootEnGS)) shootEnGS)
                                                         _    -> return shootEnGS
-                   return ((astBulRemove.enBulRemove) moveP)
+                   return ((astBulRemove) moveP)
 
 astBulRemove :: GameState -> GameState
 astBulRemove gstate = gstate { bullets = bMustBeDeleted checkBulAsColls (bullets gstate), asteroids = notBMustBeDeleted checkBulAsColls (asteroids gstate)}
