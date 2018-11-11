@@ -8,7 +8,7 @@ import Graphics.Gloss.Interface.IO.Game
 import System.Random
 
 nO_SECS_BETWEEN_CYCLES :: Float
-nO_SECS_BETWEEN_CYCLES = 0.01667 --60 FPS
+nO_SECS_BETWEEN_CYCLES = 1 --60 FPS
 
 data GameState = GameState {
                    genny :: StdGen,
@@ -25,7 +25,7 @@ data GameState = GameState {
                  }
 
 initialState :: StdGen -> [Enemy]-> GameState
-initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] Up False False 0 0
+initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemyList [] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
@@ -39,8 +39,8 @@ initialState randomgen initialEnemies = GameState lastGenerator initialEnemies i
     lastGenerator = gen4
     initialPlayer :: Player
     initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,20), rateOfFire = 1, bulletSpeed = 28, playerRotation = 0}
-
-
+    initialEnemyList :: [Enemy]
+    initialEnemyList = [Enemy {enemyPosition = (800,800), enemySpeedSize = 12, enemySpeedVec = (0,0), eRateOfFire = 0, eBulletSpeed = 13, sizeOfShip = 30}]
 
 generateTwoNumbers :: RandomGen g => (Float, Float) -> (Float, Float) -> g -> ((Float, Float), g)
 generateTwoNumbers interval1 interval2 g = let (v1, g1) = randomR interval1 g
