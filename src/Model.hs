@@ -27,7 +27,7 @@ data GameState = GameState {
                  }
 
 initialState :: StdGen -> [Enemy]-> GameState
-initialState randomgen initialEn = GameState lastGenerator initialEn initialAsteroidList initialPlayer initialEn [] initialStarList [] Up False False 0 0
+initialState randomgen initialEn = GameState lastGenerator initialEn initialAsteroidList initialPlayer initialEn [] initialStarList [explosion (0, 0)] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
@@ -99,5 +99,5 @@ explosion p = Animation {
   anSpeed = (0, 0),
   amountCycles = 0,
   maxAmountCycles = 15,
-  neverEnding = False
+  neverEnding = True
 }
