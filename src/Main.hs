@@ -16,7 +16,7 @@ import Data.Text
 type JsonOutput = Either String [Enemy]
 
 main :: IO ()
-main = do   eitherEnemy <- eitherDecode <$> B.readFile "Asteroids.json" :: IO (JsonOutput)
+main = do   eitherEnemy <- eitherDecode <$> B.readFile "Enemies.json" :: IO (JsonOutput)
             rng <- getStdGen
             case eitherEnemy of
               Left err -> putStrLn err
