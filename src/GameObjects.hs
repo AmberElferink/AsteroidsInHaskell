@@ -45,6 +45,14 @@ data Asteroid = Asteroid {
   size :: Float
 } 
 
+data Animation = Animation {
+    pics :: [Picture],
+    frameN :: Int,
+    frameMax :: Int,
+    anPos :: Point,
+    anSpeed :: Point
+}
+
 
 
 data Player = Player {
@@ -143,6 +151,10 @@ instance Draw Enemy where
     draw e = translate (fst (enemyPosition e)) (snd (enemyPosition e)) (color white (thickCircle (sizeOfShip e) (sizeOfShip e)))
 instance Draw Bullet where 
     draw b = translate (fst (bPosition b)) (snd (bPosition b)) (color white (circle (bSize b)))
+instance Draw Animation where
+    draw Animation {pics = as, frameN = fN, frameMax = fM, anPos = anP, anSpeed = anS} 
+        | fN > fM = blank
+        | otherwise = color orange (translate (fst anP) (snd anP) (as !! fN))
 
 quickCheckTest :: [Int] -> Bool
 quickCheckTest xs = reverse (reverse xs) == xs

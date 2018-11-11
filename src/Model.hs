@@ -17,6 +17,7 @@ data GameState = GameState {
                    player :: Player,
                    enemies :: [Enemy],
                    bullets :: [Bullet],
+                   animations :: [Animation],
                    keyStateW :: KeyState,
                    paused :: Bool,
                    gameOver :: Bool,
@@ -25,7 +26,7 @@ data GameState = GameState {
                  }
 
 initialState :: StdGen -> [Enemy]-> GameState
-initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] Up False False 0 0
+initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] [star] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
@@ -73,3 +74,17 @@ instance Random ScreenArea where
 enumRandomR (a, b) g =
   case randomR (fromEnum a, fromEnum b) g of
     (x, g') -> (toEnum x, g')
+    
+
+
+intervalbig = [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5]
+
+
+star :: Animation
+star = Animation { 
+    pics = [rotate x (pictures [line [(-8.5,0),(0,50),(8.5,0)],line[(0,50),(0,0)]]) | x <- intervalbig],
+    frameN = 1,
+    frameMax = 16,
+    anPos = (15, 15),
+    anSpeed = (0, 0)
+}
