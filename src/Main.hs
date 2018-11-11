@@ -13,10 +13,8 @@ import Data.Aeson
 import Data.Text
 
 
-type JsonOutput = Either String [Enemy]
-
 main :: IO ()
-main = do   eitherEnemy <- eitherDecode <$> B.readFile "Enemies.json" :: IO (JsonOutput)
+main = do   eitherEnemy <- eitherDecode <$> B.readFile "Enemies.json" :: IO (Either String [Enemy])
             rng <- getStdGen
             case eitherEnemy of
               Left err -> putStrLn err
