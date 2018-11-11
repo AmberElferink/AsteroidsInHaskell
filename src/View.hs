@@ -14,7 +14,8 @@ viewPure gstate | gameOver gstate = translate (-500) 0 (color white (text "Game 
                 | otherwise = pictures [(draw . player) gstate, pictures (map draw (asteroids gstate)), 
                                         pictures (map draw (enemies gstate)), 
                                         pictures (map draw (bullets gstate)), 
-                                        pictures (map draw (animations gstate))]  
+                                        pictures (map draw (animations gstate)),
+                                        pictures (map draw (stars gstate))]  
 
 
 

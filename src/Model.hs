@@ -17,6 +17,7 @@ data GameState = GameState {
                    player :: Player,
                    enemies :: [Enemy],
                    bullets :: [Bullet],
+                   stars :: [Star],
                    animations :: [Animation],
                    keyStateW :: KeyState,
                    paused :: Bool,
@@ -26,14 +27,17 @@ data GameState = GameState {
                  }
 
 initialState :: StdGen -> [Enemy]-> GameState
-initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] [] Up False False 0 0
+initialState randomgen initialEnemies = GameState lastGenerator initialEnemies initialAsteroidList initialPlayer initialEnemies [] initialStarList [] Up False False 0 0
   where
     --kleine scherm loopt van (-200, -200) linksonder, naar (200, 200) rechtsboven op vierkantje scherm, bij groot scherm:
     --scherm loopt van (-960, -540) dat is 1920x1080/2linksonder, naar (960, 540) rechtsboven
     generateAsteroids :: ([Asteroid], StdGen)
     generateAsteroids = generateInitialAsteroids 15 randomgen []
     initialAsteroidList = fst generateAsteroids
-    lastGenerator = snd generateAsteroids
+    gen2 = snd generateAsteroids
+    generateStars = generateInitialStars 1000 gen2 []
+    initialStarList = fst generateStars
+    lastGenerator = snd generateStars
     initialPlayer :: Player
     initialPlayer = Player {playerPosition = [(-25,-25), (0, 50), (25,-25)], lives = 3, playerSpeed = (0,30), rateOfFire = 1, bulletSpeed = 50, playerRotation = 0}
 
@@ -60,6 +64,12 @@ generateInitialAsteroids n g as = generateInitialAsteroids (n - 1) gen4 ((Astero
                                | a == RightLower = generateTwoNumbers (100, 960) (540, 100) g4
                                | a == RightUpper = generateTwoNumbers (100, 960) (-100, -540) g4
 
+generateInitialStars :: Int -> StdGen -> [Star]-> ([Star], StdGen)
+generateInitialStars 0 g as = (as, g)
+generateInitialStars n g as = generateInitialStars (n - 1) gen4 ((Star { sRelSpeed = speed1, sPosition = position1, sSize = size1}):as)
+  where (speed1, gen2) = randomR (0.3, 3) g
+        (position1, gen3) = generateTwoNumbers (-5000, 960) (-5000, 540) gen2
+        (size1, gen4) = randomR (2, 4) gen3
 
 
 

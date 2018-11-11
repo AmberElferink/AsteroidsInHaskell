@@ -31,8 +31,7 @@ step secs gstate
                   elapsedTime = 0} 
             _    -> return basicGs {
                   bullets = map move (bullets ((astBulRemove) gstate)),  
-                  elapsedTime = elapsedTime basicGs + secs,
-                  animations = map move (deleteDoneAnimations (animations gstate))} 
+                  elapsedTime = elapsedTime basicGs + secs} 
       moveP <- case keyStateW shootEnGS of 
                         Down -> return (movePlayer (playerSpeed (player shootEnGS)) shootEnGS)
                         _    -> return shootEnGS
@@ -47,6 +46,8 @@ astBulRemove gstate =
           checkBulAsColls gstate = [(collision b a, b, a) | b <- bullets gstate, a <- asteroids gstate]
           listCollisions :: [(Bool, Bullet, Asteroid)] 
           listCollisions = checkBulAsColls gstate
+
+
 
 
 getExplosions lc = map explosion bs
@@ -110,11 +111,18 @@ inputKey _ gstate = gstate  -- Otherwise keep the same
 --The world moves instead of the player
 --If the playerSpeed is zero, asteroids will move normally. Otherwise, the playerSpeed is substracted from the Astroid positions 
 movePlayer :: Vector -> GameState -> GameState
-movePlayer velocity gstate = gstate {asteroids = map (move.moveARespectively) (asteroids gstate), enemies = map(moveEnemy (player gstate).moveERespectively) (enemies gstate), bullets = map(move.moveBRespectively) (bullets gstate)}
+movePlayer velocity gstate = gstate {
+      asteroids = map (move.moveARespectively) (asteroids gstate), 
+      enemies = map(moveEnemy (player gstate).moveERespectively) (enemies gstate), 
+      bullets = map(move.moveBRespectively) (bullets gstate),
+      stars = map moveSRespectively (stars gstate)}
     where moveARespectively :: Asteroid -> Asteroid
           moveARespectively ast = ast {position = (-.) (position ast) velocity}
           moveERespectively :: Enemy -> Enemy
           moveERespectively en = en {enemyPosition = (-.) (enemyPosition en) velocity}
           moveBRespectively :: Bullet -> Bullet
           moveBRespectively bul = bul {bPosition = (-.) (bPosition bul) velocity}
+          moveSRespectively :: Star -> Star
+          moveSRespectively star = star {sPosition = (-.) (sPosition star) (mult (sRelSpeed star) velocity)}
+          
        

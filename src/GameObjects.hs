@@ -78,6 +78,13 @@ data Enemy = Enemy {
     sizeOfShip :: Float
 } deriving(Show, Generic)
 
+
+data Star = Star {
+    sRelSpeed :: Float,
+    sPosition :: Point,
+    sSize :: Float
+}
+
 instance ToJSON Enemy where
     toEncoding = genericToEncoding defaultOptions
   
@@ -148,6 +155,8 @@ instance Rotation Player where
      
 instance Move Asteroid where
     move a = a {position = (+.) (position a) (speed a)}
+
+
      
 instance Move Bullet where 
     move a = a {bPosition = (+.) (bPosition a) (bSpeed a)}
@@ -164,11 +173,15 @@ moveEnemy p e = e {enemyPosition = (+.) (enemyPosition e) speedVec', enemySpeedV
 instance Draw Player where
     draw p = color red (polygon (playerPosition p))
 instance Draw Asteroid where
-    draw a = translate (fst (position a)) (snd (position a)) (color white (circle (size a)))
+    draw a = translate (fst (position a)) (snd (position a)) (color red (circle (size a)))
 instance Draw Enemy where
     draw e = translate (fst (enemyPosition e)) (snd (enemyPosition e)) (color white (thickCircle (sizeOfShip e) (sizeOfShip e)))
 instance Draw Bullet where 
-    draw b = translate (fst (bPosition b)) (snd (bPosition b)) (color white (circle (bSize b)))
+    draw b = translate (fst (bPosition b)) (snd (bPosition b)) (color orange (circle (bSize b)))
+
+instance Draw Star where 
+    draw s = translate (fst (sPosition s)) (snd (sPosition s)) (color white (circle (sSize s)))
+
 instance Draw Animation where
     draw Animation {pics = as, frameN = fN, frameMax = fM, anPos = anP, anSpeed = _} 
         | fN > fM = blank
