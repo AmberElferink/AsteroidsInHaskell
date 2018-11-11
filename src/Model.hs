@@ -48,10 +48,11 @@ data ScreenArea = LeftUpper | RightUpper | RightLower | LeftLower deriving(Enum,
 --takes: amount of asteroids, the randomgen, [], and outputs the asteroidslist and the last randomgenerator
 generateInitialAsteroids :: Int -> StdGen -> [Asteroid]-> ([Asteroid], StdGen)
 generateInitialAsteroids 0 g as = (as, g)
-generateInitialAsteroids n g as = generateInitialAsteroids (n - 1) gen3  ((Asteroid { speed = speed1, position = position1, size = 50}):as)
+generateInitialAsteroids n g as = generateInitialAsteroids (n - 1) gen4 ((Asteroid { speed = speed1, position = position1, size = size1}):as)
   where (randomPos, gen1) = random g :: (ScreenArea, StdGen)
         (speed1, gen2) = generateTwoNumbers (-20, 20) (-20, 20) gen1
         (position1, gen3) = generatePositions randomPos gen2 
+        (size1, gen4) = randomR (10, 70) gen3
         generatePositions :: ScreenArea -> StdGen -> (Point, StdGen) --asteroids spawnt outside of a box of 100 x 100 around the player.
         generatePositions a g4 | a == LeftUpper = generateTwoNumbers (-960, -100) (-100, -540) g4
                                | a == LeftLower = generateTwoNumbers (-960, -100) (540, 100) g4
