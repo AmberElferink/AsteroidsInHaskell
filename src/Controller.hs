@@ -20,22 +20,22 @@ step secs gstate
       let basicGs = 
             gstate {
                   asteroids = map move (asteroids (astBulRemove gstate)), 
-                  enemies = map (moveEnemy(player gstate)) (enemies (gstate)), 
+                  enemies = map (moveEnemy(player gstate)) (enemies (enBulRemove gstate)), 
                   player = rotation (player gstate), 
                   elapsedTime = elapsedTime gstate + secs,
                   animations = map move (deleteDoneAnimations (animations gstate))
                   } 
-      shootEnGS <- case secs + elapsedTime basicGs >= 5 of 
-            True -> return basicGs {bullets = 
+      let shootEnGS = case secs + elapsedTime basicGs >= 5 of 
+            True -> basicGs {bullets = 
                   map move (bullets basicGs ++ concatMap shoot (enemies basicGs)), 
                   elapsedTime = 0} 
-            _    -> return basicGs {
-                  bullets = map move (bullets ((astBulRemove) gstate)),  
+            _    -> basicGs {
+                  bullets = map move (bullets ((astBulRemove.enBulRemove) basicGs)),  
                   elapsedTime = elapsedTime basicGs + secs} 
-      moveP <- case keyStateW shootEnGS of 
-                        Down -> return (movePlayer (playerSpeed (player shootEnGS)) shootEnGS)
-                        _    -> return shootEnGS
-      return ((astBulRemove) moveP)
+      let moveP = case keyStateW shootEnGS of 
+                        Down -> movePlayer (playerSpeed (player shootEnGS)) shootEnGS
+                        _    -> shootEnGS
+      return ((astBulRemove.enBulRemove) moveP)
 
 astBulRemove :: GameState -> GameState
 astBulRemove gstate = 
