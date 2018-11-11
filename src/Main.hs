@@ -22,7 +22,7 @@ main = do   eitherEnemy <- eitherDecode <$> B.readFile "Enemies.json" :: IO (Jso
               Left err -> putStrLn err
               Right initEnemies -> playIO (InWindow "Counter" (1900, 1000) (0, 0)) -- Or FullScreen
                                 black            -- Background color
-                                100               -- Frames per second
+                                10               -- Frames per second
                                 (initialState rng initEnemies)
                                 view             -- View function
                                 input            -- Event function

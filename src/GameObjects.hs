@@ -80,7 +80,7 @@ instance Shoot Player where
          where bspeed' = mult (bulletSpeed p) (unitVector (playerSpeed p)) 
 
 instance Shoot Enemy where
-    shoot e = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = enemyPosition e}]
+    shoot e = [Bullet {bSpeed = bspeed', bSize = 7, bPosition = (+.) (enemyPosition e) (mult (sizeOfShip e * 3) (unitVector (enemySpeedVec e)))}]
          where bspeed' = mult (eBulletSpeed e) (unitVector (enemySpeedVec e)) 
 
 class Move a where 
