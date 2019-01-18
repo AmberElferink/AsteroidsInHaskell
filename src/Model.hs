@@ -88,13 +88,13 @@ enumRandomR (a, b) g =
 
 --this served as inspiration for the star animation: https://stackoverflow.com/questions/19688888/animating-with-gloss-in-haskell
 intervalbig :: [Float]
-intervalbig = [0,22.5,45,67.5,90,112.5,135,157.5,180,202.5,225,247.5,270,292.5,315,337.5]
+intervalbig = [0,22.5,45,67.5,0,22.5,45,67.5]
 
 explosion :: Point -> Animation
 explosion p = Animation { 
   pics = [rotate x (pictures [line [(-8.5,0),(0,50),(8.5,0)], line[(0,50),(0,0)]]) | x <- intervalbig],
   frameN = 0,
-  frameMax = 16,
+  frameMax = 8,
   anPos = p,
   anSpeed = (0, 0),
   amountCycles = 0,
